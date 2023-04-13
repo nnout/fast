@@ -148,6 +148,26 @@ export class FASTPicker extends FormAssociatedPicker {
     public loadingText: string = "Loading suggestions";
 
     /**
+     * Disables the picker.
+     *
+     * @public
+     * @remarks
+     * HTML Attribute: disabled
+     */
+    @attr({ mode: "boolean" })
+    public disabled: boolean;
+    public disabledChanged(previous: boolean, next: boolean): void {
+        if (super.disabledChanged) {
+            super.disabledChanged(previous, next);
+        }
+        if (this.$fastController.isConnected) {
+            if (this.disabled) {
+                this.toggleFlyout(false);
+            }
+        }
+    }
+
+    /**
      * Applied to the aria-label attribute of the input element
      *
      * @remarks
@@ -542,7 +562,6 @@ export class FASTPicker extends FormAssociatedPicker {
             "optionsupdated",
             this.handleMenuOptionsUpdated
         );
-
         this.handleSelectionChange();
     }
 
@@ -550,7 +569,7 @@ export class FASTPicker extends FormAssociatedPicker {
      * Toggles the menu flyout
      */
     private toggleFlyout(open: boolean): void {
-        if (this.flyoutOpen === open) {
+        if (this.flyoutOpen === open || (this.disabled && !this.flyoutOpen)) {
             return;
         }
 
@@ -582,6 +601,9 @@ export class FASTPicker extends FormAssociatedPicker {
      * Handle click event from input element
      */
     private handleInputClick = (e: MouseEvent): void => {
+        if (e.defaultPrevented || this.disabled) {
+            return;
+        }
         e.preventDefault();
         this.toggleFlyout(true);
     };
@@ -600,7 +622,7 @@ export class FASTPicker extends FormAssociatedPicker {
      * Handle key down events.
      */
     public handleKeyDown(e: KeyboardEvent): boolean {
-        if (e.defaultPrevented) {
+        if (e.defaultPrevented || this.disabled) {
             return false;
         }
         const activeElement = this.getRootActiveElement();
