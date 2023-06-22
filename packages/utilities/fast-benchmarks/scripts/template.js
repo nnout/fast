@@ -38,7 +38,11 @@ async function writeConfig(name, config, ext = JSON_EXT, dest = ROOT_DIR) {
 async function generateTsConfig({ library, benchmark }) {
     const tsConfig = {
         extends: "./tsconfig.json",
-        include: ["utils/**/*.ts", `benchmarks/${library}/${benchmark}/*.ts`],
+        include: [
+            "utils/**/*.ts",
+            `benchmarks/${library}/${benchmark}/*.ts`,
+            "global.d.ts",
+        ],
     };
     return await writeConfig(`tsconfig.${library}`, tsConfig);
 }
@@ -184,12 +188,12 @@ function generateBenchmark(
         : method
         ? `${url}?template=${template}&method=${method}`
         : `${url}?template=${template}`;
+
     newBench.url = fullUrl;
+    const tail = method ? `-${method}` : "";
     newBench.name = queryParams
         ? `${name}-${template}-${method}-${queryStr}`
-        : method
-        ? `${name}-${template}-${method}`
-        : `${name}`;
+        : `${name}-${template}${tail}`;
     benchmarks.push(newBench);
     return benchmarks;
 }
@@ -235,7 +239,8 @@ export async function generateBenchmarks(
         ];
 
         versions.forEach(version => {
-            const isPublishedVersion = version.includes(".");
+            // regex exp that checks if string is indeed in version format: ${number}.${number}.${number}
+            const isPublishedVersion = /[0-9]+\.[0-9]+\.[0-9]+/.test(version);
             const isLocalBranch = localProps.branchName && version === LOCAL;
             const isBranch = isLocalBranch || !isPublishedVersion;
             const url =

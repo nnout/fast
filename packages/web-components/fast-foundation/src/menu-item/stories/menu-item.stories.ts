@@ -1,4 +1,4 @@
-import { css, html, repeat } from "@microsoft/fast-element";
+import { css, html, repeat, Updates } from "@microsoft/fast-element";
 import type { Meta, Story, StoryArgs } from "../../__test__/helpers.js";
 import { renderComponent } from "../../__test__/helpers.js";
 import type { FASTMenuItem } from "../menu-item.js";
@@ -40,8 +40,8 @@ MenuItem.args = {
 export const MenuItemWithSlottedStart: Story<FASTMenuItem> = MenuItem.bind({});
 MenuItemWithSlottedStart.args = {
     storyContent: html`
+        <svg slot="start" width="20" height="20"><use href="#test-icon" /></svg>
         Menu item with slotted start icon
-        <svg slot="start"><use href="#test-icon"></svg>
     `,
 };
 
@@ -49,7 +49,16 @@ export const MenuItemWithSlottedEnd: Story<FASTMenuItem> = MenuItem.bind({});
 MenuItemWithSlottedEnd.args = {
     storyContent: html`
         Menu item with slotted end icon
-        <svg slot="end"><use href="#test-icon"></svg>
+        <svg slot="end" width="20" height="20"><use href="#test-icon-2" /></svg>
+    `,
+};
+
+export const MenuItemWithSlottedStartEnd: Story<FASTMenuItem> = MenuItem.bind({});
+MenuItemWithSlottedStartEnd.args = {
+    storyContent: html`
+        <svg slot="start" width="20" height="20"><use href="#test-icon" /></svg>
+        Menu item with slotted start & end icon
+        <svg slot="end" width="20" height="20"><use href="#test-icon-2" /></svg>
     `,
 };
 
@@ -126,17 +135,21 @@ MenuItemExpanded.args = {
 MenuItemExpanded.decorators = [
     Story => {
         const renderedStory = Story() as FASTMenuItem;
-        // Disable cursor interaction to prevent the state from changing
-        renderedStory.$fastController.addStyles(css`
-            :host {
-                width: 50%;
-                pointer-events: none;
-            }
 
-            ::slotted(div) {
-                padding: 10px;
-            }
-        `);
+        Updates.enqueue(() => {
+            // Disable cursor interaction to prevent the state from changing
+            renderedStory.$fastController.addStyles(css`
+                :host {
+                    width: 50%;
+                    pointer-events: none;
+                }
+
+                ::slotted(div) {
+                    padding: 10px;
+                }
+            `);
+        });
+
         return renderedStory;
     },
 ];

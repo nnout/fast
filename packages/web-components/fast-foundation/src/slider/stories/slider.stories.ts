@@ -1,10 +1,9 @@
-import { css, html, repeat } from "@microsoft/fast-element";
-import { Orientation } from "@microsoft/fast-web-utilities";
+import { css, html, repeat, Updates } from "@microsoft/fast-element";
 import { storyTemplate as sliderLabelStoryTemplate } from "../../slider-label/stories/slider-label.stories.js";
 import type { Meta, Story, StoryArgs } from "../../__test__/helpers.js";
 import { renderComponent } from "../../__test__/helpers.js";
 import type { FASTSlider } from "../slider.js";
-import { SliderMode } from "../slider.options.js";
+import { SliderMode, SliderOrientation } from "../slider.options.js";
 
 const storyTemplate = html<StoryArgs<FASTSlider>>`
     <fast-slider
@@ -32,7 +31,7 @@ export default {
         max: { control: "number" },
         min: { control: "number" },
         mode: { control: "radio", options: Object.values(SliderMode) },
-        orientation: { control: "radio", options: Object.values(Orientation) },
+        orientation: { control: "radio", options: Object.values(SliderOrientation) },
         readOnly: { control: "boolean" },
         step: { control: "number" },
         storyContent: { table: { disable: true } },
@@ -61,11 +60,14 @@ SliderWithLabels.args = {
 SliderWithLabels.decorators = [
     Story => {
         const renderedStory = Story() as FASTSlider;
-        renderedStory.$fastController.addStyles(css`
-            :host([orientation="horizontal"]) {
-                padding: 0 1em;
-            }
-        `);
+
+        Updates.enqueue(() => {
+            renderedStory.$fastController.addStyles(css`
+                :host([orientation="horizontal"]) {
+                    padding: 0 1em;
+                }
+            `);
+        });
 
         return renderedStory;
     },
@@ -73,7 +75,7 @@ SliderWithLabels.decorators = [
 
 export const SliderVerticalOrientation: Story<FASTSlider> = Slider.bind({});
 SliderVerticalOrientation.args = {
-    orientation: Orientation.vertical,
+    orientation: SliderOrientation.vertical,
 };
 
 export const SliderInForm: Story<FASTSlider> = renderComponent(

@@ -112,3 +112,19 @@ ButtonWithResetType.args = {
     storyContent: "Reset",
     type: "reset",
 };
+
+export const ButtonWithSlottedStartEnd: Story<FASTButton> = Button.bind({});
+ButtonWithSlottedStartEnd.args = {
+    storyContent: html`
+        <svg slot="start" width="20" height="20"><use href="#test-icon" /></svg>
+        Button
+        <svg slot="end" width="20" height="20"><use href="#test-icon-2" /></svg>
+    `,
+};
+
+export const ButtonWithSlottedIconContent: Story<FASTButton> = Button.bind({});
+ButtonWithSlottedIconContent.args = {
+    storyContent: html`
+        <svg width="20" height="20"><use href="#test-icon" /></svg>
+    `,
+};

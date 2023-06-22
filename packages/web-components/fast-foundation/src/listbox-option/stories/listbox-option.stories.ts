@@ -7,6 +7,7 @@ export const storyTemplate = html<StoryArgs<FASTListboxOption>>`
     <fast-option
         ?disabled="${x => x.disabled}"
         ?selected="${x => x.selected}"
+        id="${x => x.id}"
         value="${x => x.value}"
     >
         ${x => x.storyContent}
@@ -24,7 +25,6 @@ export default {
     },
     argTypes: {
         disabled: { control: "boolean" },
-        items: { table: { disable: true } },
         selected: { control: "boolean" },
         value: { control: "text" },
         ariaChecked: { control: "text" },
@@ -38,3 +38,13 @@ export default {
 export const ListboxOption: Story<FASTListboxOption> = renderComponent(
     storyTemplate
 ).bind({});
+
+export const ListboxOptionWithSlottedStartEnd: Story<FASTListboxOption> =
+    ListboxOption.bind({});
+ListboxOptionWithSlottedStartEnd.args = {
+    storyContent: html`
+        <svg slot="start" width="20" height="20"><use href="#test-icon" /></svg>
+        Listbox option
+        <svg slot="end" width="20" height="20"><use href="#test-icon-2" /></svg>
+    `,
+};

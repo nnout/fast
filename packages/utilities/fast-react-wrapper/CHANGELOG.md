@@ -1,8 +1,160 @@
 # Change Log - @microsoft/fast-react-wrapper
 
-This log was last generated on Thu, 18 Aug 2022 20:46:10 GMT and should not be manually modified.
+This log was last generated on Fri, 16 Jun 2023 18:17:13 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 1.0.0-alpha.25
+
+Fri, 16 Jun 2023 18:17:13 GMT
+
+### Changes
+
+- Bump @microsoft/fast-element to v2.0.0-beta.24
+
+## 1.0.0-alpha.24
+
+Tue, 28 Mar 2023 22:14:10 GMT
+
+### Changes
+
+- Bump @microsoft/fast-element to v2.0.0-beta.23
+
+## 1.0.0-alpha.23
+
+Sat, 11 Mar 2023 00:09:49 GMT
+
+### Changes
+
+- Bump @microsoft/fast-element to v2.0.0-beta.22
+
+## 1.0.0-alpha.22
+
+Tue, 14 Feb 2023 04:02:36 GMT
+
+### Changes
+
+- Bump @microsoft/fast-element to v2.0.0-beta.21
+
+## 1.0.0-alpha.21
+
+Wed, 11 Jan 2023 22:07:48 GMT
+
+### Changes
+
+- Bump @microsoft/fast-element to v2.0.0-beta.20
+
+## 1.0.0-alpha.20
+
+Fri, 02 Dec 2022 01:18:22 GMT
+
+### Changes
+
+- Bump @microsoft/fast-element to v2.0.0-beta.19
+
+## 1.0.0-alpha.19
+
+Tue, 15 Nov 2022 02:40:35 GMT
+
+### Changes
+
+- Bump @microsoft/fast-element to v2.0.0-beta.18
+
+## 1.0.0-alpha.18
+
+Tue, 01 Nov 2022 23:26:26 GMT
+
+### Changes
+
+- Bump @microsoft/fast-element to v2.0.0-beta.17
+
+## 1.0.0-alpha.17
+
+Fri, 28 Oct 2022 20:44:44 GMT
+
+### Changes
+
+- Bump @microsoft/fast-element to v2.0.0-beta.16
+
+## 1.0.0-alpha.16
+
+Tue, 25 Oct 2022 20:24:32 GMT
+
+### Changes
+
+- Bump @microsoft/fast-element to v2.0.0-beta.15
+
+## 1.0.0-alpha.15
+
+Fri, 14 Oct 2022 18:26:11 GMT
+
+### Changes
+
+- Bump @microsoft/fast-element to v2.0.0-beta.14
+
+## 1.0.0-alpha.14
+
+Mon, 10 Oct 2022 20:28:02 GMT
+
+### Changes
+
+- Bump @microsoft/fast-element to v2.0.0-beta.13
+
+## 1.0.0-alpha.13
+
+Thu, 06 Oct 2022 23:21:20 GMT
+
+### Changes
+
+- Bump @microsoft/fast-element to v2.0.0-beta.12
+
+## 1.0.0-alpha.12
+
+Wed, 05 Oct 2022 23:26:01 GMT
+
+### Changes
+
+- Bump @microsoft/fast-element to v2.0.0-beta.11
+
+## 1.0.0-alpha.11
+
+Mon, 03 Oct 2022 23:44:38 GMT
+
+### Changes
+
+- Bump @microsoft/fast-element to v2.0.0-beta.10
+
+## 1.0.0-alpha.10
+
+Wed, 28 Sep 2022 20:45:51 GMT
+
+### Changes
+
+- Bump @microsoft/fast-element to v2.0.0-beta.9
+
+## 1.0.0-alpha.9
+
+Tue, 27 Sep 2022 22:31:52 GMT
+
+### Changes
+
+- Bump @microsoft/fast-element to v2.0.0-beta.8
+
+## 1.0.0-alpha.8
+
+Fri, 23 Sep 2022 22:53:27 GMT
+
+### Changes
+
+- Bump @microsoft/fast-element to v2.0.0-beta.7
+
+## 1.0.0-alpha.7
+
+Thu, 01 Sep 2022 21:53:34 GMT
+
+### Changes
+
+- Bump @microsoft/fast-element to v2.0.0-beta.6
 
 ## 1.0.0-alpha.6
 

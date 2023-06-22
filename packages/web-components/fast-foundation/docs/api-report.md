@@ -4,19 +4,20 @@
 
 ```ts
 
-import { Behavior } from '@microsoft/fast-element';
-import type { CaptureType } from '@microsoft/fast-element';
-import { composedContains } from '@microsoft/fast-element/utilities';
-import { composedParent } from '@microsoft/fast-element/utilities';
+import { CaptureType } from '@microsoft/fast-element';
 import { Constructable } from '@microsoft/fast-element';
 import { CSSDirective } from '@microsoft/fast-element';
 import { Direction } from '@microsoft/fast-web-utilities';
+import type { ElementsFilter } from '@microsoft/fast-element';
 import { ElementStyles } from '@microsoft/fast-element';
 import { ElementViewTemplate } from '@microsoft/fast-element';
 import { FASTElement } from '@microsoft/fast-element';
 import { FASTElementDefinition } from '@microsoft/fast-element';
+import { HostBehavior } from '@microsoft/fast-element';
+import { HostController } from '@microsoft/fast-element';
+import { HTMLDirective } from '@microsoft/fast-element';
 import { Orientation } from '@microsoft/fast-web-utilities';
-import { SyntheticViewTemplate } from '@microsoft/fast-element';
+import type { SyntheticViewTemplate } from '@microsoft/fast-element';
 import { ViewTemplate } from '@microsoft/fast-element';
 
 // @public
@@ -26,19 +27,19 @@ export const AccordionExpandMode: {
 };
 
 // @public
-export type AccordionExpandMode = typeof AccordionExpandMode[keyof typeof AccordionExpandMode];
+export type AccordionExpandMode = ValuesOf<typeof AccordionExpandMode>;
 
 // @public
-export type AccordionItemOptions = StartEndOptions & {
-    expandedIcon?: string | SyntheticViewTemplate;
-    collapsedIcon?: string | SyntheticViewTemplate;
+export type AccordionItemOptions = StartEndOptions<FASTAccordionItem> & {
+    expandedIcon?: StaticallyComposableHTML<FASTAccordionItem>;
+    collapsedIcon?: StaticallyComposableHTML<FASTAccordionItem>;
 };
 
 // @public
-export function accordionItemTemplate(options?: AccordionItemOptions): ElementViewTemplate<FASTAccordionItem>;
+export function accordionItemTemplate<T extends FASTAccordionItem>(options?: AccordionItemOptions): ElementViewTemplate<T>;
 
 // @public
-export function accordionTemplate(): ElementViewTemplate<FASTAccordion>;
+export function accordionTemplate<T extends FASTAccordion>(): ElementViewTemplate<T>;
 
 // @public
 export interface AnchoredRegionConfig {
@@ -68,13 +69,13 @@ export const AnchoredRegionPositionLabel: {
 };
 
 // @public
-export type AnchoredRegionPositionLabel = typeof AnchoredRegionPositionLabel[keyof typeof AnchoredRegionPositionLabel];
+export type AnchoredRegionPositionLabel = ValuesOf<typeof AnchoredRegionPositionLabel>;
 
 // @public
-export function anchoredRegionTemplate(): ElementViewTemplate<FASTAnchoredRegion>;
+export function anchoredRegionTemplate<T extends FASTAnchoredRegion>(): ElementViewTemplate<T>;
 
 // @public
-export type AnchorOptions = StartEndOptions;
+export type AnchorOptions = StartEndOptions<FASTAnchor>;
 
 // @public
 export const AnchorTarget: {
@@ -85,10 +86,10 @@ export const AnchorTarget: {
 };
 
 // @public
-export type AnchorTarget = typeof AnchorTarget[keyof typeof AnchorTarget];
+export type AnchorTarget = ValuesOf<typeof AnchorTarget>;
 
 // @public
-export function anchorTemplate(options?: AnchorOptions): ElementViewTemplate<FASTAnchor>;
+export function anchorTemplate<T extends FASTAnchor>(options?: AnchorOptions): ViewTemplate<T>;
 
 // @public
 export function applyMixins(derivedCtor: any, ...baseCtors: any[]): void;
@@ -123,15 +124,15 @@ export const AutoUpdateMode: {
 };
 
 // @public
-export type AutoUpdateMode = typeof AutoUpdateMode[keyof typeof AutoUpdateMode];
+export type AutoUpdateMode = ValuesOf<typeof AutoUpdateMode>;
 
 // @public
 export type AvatarOptions = {
-    media?: string | SyntheticViewTemplate;
+    media?: StaticallyComposableHTML<FASTAvatar>;
 };
 
 // @public
-export function avatarTemplate(options?: AvatarOptions): ElementViewTemplate<FASTAvatar>;
+export function avatarTemplate<T extends FASTAvatar>(options?: AvatarOptions): ElementViewTemplate<T>;
 
 // @public
 export const AxisPositioningMode: {
@@ -141,7 +142,7 @@ export const AxisPositioningMode: {
 };
 
 // @public
-export type AxisPositioningMode = typeof AxisPositioningMode[keyof typeof AxisPositioningMode];
+export type AxisPositioningMode = ValuesOf<typeof AxisPositioningMode>;
 
 // @public
 export const AxisScalingMode: {
@@ -151,27 +152,27 @@ export const AxisScalingMode: {
 };
 
 // @public
-export type AxisScalingMode = typeof AxisScalingMode[keyof typeof AxisScalingMode];
+export type AxisScalingMode = ValuesOf<typeof AxisScalingMode>;
 
 // @public
-export function badgeTemplate(): ElementViewTemplate<FASTBadge>;
+export function badgeTemplate<T extends FASTBadge>(): ElementViewTemplate<T>;
 
 // @public
-export type BreadcrumbItemOptions = StartEndOptions & {
-    separator?: string | SyntheticViewTemplate;
+export type BreadcrumbItemOptions = StartEndOptions<FASTBreadcrumbItem> & {
+    separator?: StaticallyComposableHTML<FASTBreadcrumbItem>;
 };
 
 // @public
-export function breadcrumbItemTemplate(options?: BreadcrumbItemOptions): ElementViewTemplate<FASTBreadcrumbItem>;
+export function breadcrumbItemTemplate<T extends FASTBreadcrumbItem>(options?: BreadcrumbItemOptions): ElementViewTemplate<T>;
 
 // @public
-export function breadcrumbTemplate(): ElementViewTemplate<FASTBreadcrumb>;
+export function breadcrumbTemplate<T extends FASTBreadcrumb>(): ElementViewTemplate<T>;
 
 // @public
-export type ButtonOptions = StartEndOptions;
+export type ButtonOptions = StartEndOptions<FASTButton>;
 
 // @public
-export function buttonTemplate(options?: ButtonOptions): ElementViewTemplate<FASTButton>;
+export function buttonTemplate<T extends FASTButton>(options?: ButtonOptions): ElementViewTemplate<T>;
 
 // @public
 export const ButtonType: {
@@ -181,7 +182,7 @@ export const ButtonType: {
 };
 
 // @public
-export type ButtonType = typeof ButtonType[keyof typeof ButtonType];
+export type ButtonType = ValuesOf<typeof ButtonType>;
 
 // @public
 export function calendarCellTemplate(options: CalendarOptions, todayString: string): ViewTemplate<CalendarDateInfo>;
@@ -202,27 +203,27 @@ export type CalendarInfo = MonthInfo & {
 };
 
 // @public
-export type CalendarOptions = StartEndOptions & {
+export type CalendarOptions = StartEndOptions<FASTCalendar> & {
     dataGridCell: TemplateElementDependency;
     dataGridRow: TemplateElementDependency;
     dataGrid: TemplateElementDependency;
-    title?: SyntheticViewTemplate | string;
+    title?: StaticallyComposableHTML<FASTCalendar>;
 };
 
 // @public (undocumented)
 export function calendarRowTemplate(options: CalendarOptions, todayString: string): ViewTemplate;
 
 // @public
-export function calendarTemplate(options: CalendarOptions): ElementViewTemplate<FASTCalendar>;
+export function calendarTemplate<T extends FASTCalendar>(options: CalendarOptions): ElementViewTemplate<T>;
 
 // @public
-export function calendarTitleTemplate(): ViewTemplate<FASTCalendar>;
+export function calendarTitleTemplate<T extends FASTCalendar>(): ViewTemplate<T>;
 
 // @public
 export function calendarWeekdayTemplate(options: CalendarOptions): ViewTemplate<WeekdayText>;
 
 // @public
-export function cardTemplate(): ElementViewTemplate<FASTCard>;
+export function cardTemplate<T extends FASTCard>(): ElementViewTemplate<T>;
 
 // @public
 export type CellItemTemplateOptions = {
@@ -257,23 +258,23 @@ export type CheckableFormAssociatedElement = FormAssociatedElement & CheckableFo
 
 // @public
 export type CheckboxOptions = {
-    checkedIndicator?: string | SyntheticViewTemplate;
-    indeterminateIndicator?: string | SyntheticViewTemplate;
+    checkedIndicator?: StaticallyComposableHTML<FASTCheckbox>;
+    indeterminateIndicator?: StaticallyComposableHTML<FASTCheckbox>;
 };
 
 // @public
-export function checkboxTemplate(options?: CheckboxOptions): ElementViewTemplate<FASTCheckbox>;
+export function checkboxTemplate<T extends FASTCheckbox>(options?: CheckboxOptions): ElementViewTemplate<T>;
 
 // @public
 export interface ColumnDefinition {
     cellFocusTargetCallback?: (cell: FASTDataGridCell) => HTMLElement;
     cellInternalFocusQueue?: boolean;
-    cellTemplate?: ViewTemplate;
+    cellTemplate?: ViewTemplate | SyntheticViewTemplate;
     columnDataKey: string;
     gridColumn?: string;
     headerCellFocusTargetCallback?: (cell: FASTDataGridCell) => HTMLElement;
     headerCellInternalFocusQueue?: boolean;
-    headerCellTemplate?: ViewTemplate;
+    headerCellTemplate?: ViewTemplate | SyntheticViewTemplate;
     isRowHeader?: boolean;
     title?: string;
 }
@@ -287,27 +288,24 @@ export const ComboboxAutocomplete: {
 };
 
 // @public
-export type ComboboxAutocomplete = typeof ComboboxAutocomplete[keyof typeof ComboboxAutocomplete];
+export type ComboboxAutocomplete = ValuesOf<typeof ComboboxAutocomplete>;
 
 // @public
-export type ComboboxOptions = StartEndOptions & {
-    indicator?: string | SyntheticViewTemplate;
+export type ComboboxOptions = StartEndOptions<FASTCombobox> & {
+    indicator?: StaticallyComposableHTML<FASTCombobox>;
 };
 
 // @public
-export function comboboxTemplate(options?: ComboboxOptions): ElementViewTemplate<FASTCombobox>;
-
-export { composedContains }
-
-export { composedParent }
+export function comboboxTemplate<T extends FASTCombobox>(options?: ComboboxOptions): ElementViewTemplate<T>;
 
 // @beta
 export type ConstructableFormAssociated = Constructable<HTMLElement & FASTElement>;
 
 // @public (undocumented)
-export class CSSDesignToken<T> extends DesignToken<T> implements CSSDirective {
+export class CSSDesignToken<T> extends DesignToken<T> implements CSSDirective, HTMLDirective {
     constructor(configuration: CSSDesignTokenConfiguration);
     createCSS(): string;
+    createHTML(): string;
     readonly cssCustomProperty: string;
 }
 
@@ -316,14 +314,14 @@ export interface CSSDesignTokenConfiguration extends DesignTokenConfiguration {
     cssCustomPropertyName: string;
 }
 
-// @public @deprecated
+// @public
 export type CSSDisplayPropertyValue = "block" | "contents" | "flex" | "grid" | "inherit" | "initial" | "inline" | "inline-block" | "inline-flex" | "inline-grid" | "inline-table" | "list-item" | "none" | "run-in" | "table" | "table-caption" | "table-cell" | "table-column" | "table-column-group" | "table-footer-group" | "table-header-group" | "table-row" | "table-row-group";
 
 // @public
 export const darkModeStylesheetBehavior: (styles: ElementStyles) => MatchMediaStyleSheetBehavior;
 
 // @public
-export function dataGridCellTemplate(): ElementViewTemplate<FASTDataGridCell>;
+export function dataGridCellTemplate<T extends FASTDataGridCell>(): ElementViewTemplate<T>;
 
 // @public
 export const DataGridCellTypes: {
@@ -333,7 +331,7 @@ export const DataGridCellTypes: {
 };
 
 // @public
-export type DataGridCellTypes = typeof DataGridCellTypes[keyof typeof DataGridCellTypes];
+export type DataGridCellTypes = ValuesOf<typeof DataGridCellTypes>;
 
 // @public
 export type DataGridOptions = {
@@ -341,7 +339,7 @@ export type DataGridOptions = {
 };
 
 // @public
-export function dataGridRowTemplate(options: CellItemTemplateOptions): ElementViewTemplate<FASTDataGridRow>;
+export function dataGridRowTemplate<T extends FASTDataGridRow>(options: CellItemTemplateOptions): ElementViewTemplate<T>;
 
 // @public
 export const DataGridRowTypes: {
@@ -351,10 +349,30 @@ export const DataGridRowTypes: {
 };
 
 // @public
-export type DataGridRowTypes = typeof DataGridRowTypes[keyof typeof DataGridRowTypes];
+export type DataGridRowTypes = ValuesOf<typeof DataGridRowTypes>;
 
 // @public
-export function dataGridTemplate(options: DataGridOptions): ElementViewTemplate<FASTDataGrid>;
+export const DataGridSelectionBehavior: {
+    readonly programmatic: "programmatic";
+    readonly keyboardOnly: "keyboard-only";
+    readonly auto: "auto";
+};
+
+// @public
+export type DataGridSelectionBehavior = ValuesOf<typeof DataGridSelectionBehavior>;
+
+// @public
+export const DataGridSelectionMode: {
+    readonly none: "none";
+    readonly singleRow: "single-row";
+    readonly multiRow: "multi-row";
+};
+
+// @public
+export type DataGridSelectionMode = ValuesOf<typeof DataGridSelectionMode>;
+
+// @public
+export function dataGridTemplate<T extends FASTDataGrid>(options: DataGridOptions): ElementViewTemplate<T>;
 
 // @public
 export class DateFormatter {
@@ -395,7 +413,7 @@ export const DayFormat: {
 };
 
 // @public
-export type DayFormat = typeof DayFormat[keyof typeof DayFormat];
+export type DayFormat = ValuesOf<typeof DayFormat>;
 
 // Warning: (ae-different-release-tags) This symbol has another declaration with a different release tag
 // Warning: (ae-internal-mixed-release-tag) Mixed release tags are not allowed for "DelegatesARIAButton" because one of its declarations is marked as @internal
@@ -586,7 +604,7 @@ export interface DesignTokenSubscriber<T extends DesignToken<any>> {
 }
 
 // @public
-export function dialogTemplate(): ElementViewTemplate<FASTDialog>;
+export function dialogTemplate<T extends FASTDialog>(): ElementViewTemplate<T>;
 
 // Warning: (ae-internal-missing-underscore) The name "Dimension" should be prefixed with an underscore because the declaration is marked as @internal
 //
@@ -602,10 +620,22 @@ export interface Dimension {
 export const disabledCursor = "not-allowed";
 
 // @public
-export function disclosureTemplate(): ElementViewTemplate<FASTDisclosure>;
+export type DisclosureOptions = StartEndOptions<FASTDisclosure>;
 
-// @public @deprecated
+// @public
+export function disclosureTemplate<T extends FASTDisclosure>(options?: DisclosureOptions): ElementViewTemplate<T>;
+
+// @public
 export function display(displayValue: CSSDisplayPropertyValue): string;
+
+// @public
+export const DividerOrientation: {
+    readonly horizontal: "horizontal";
+    readonly vertical: "vertical";
+};
+
+// @public
+export type DividerOrientation = ValuesOf<typeof DividerOrientation>;
 
 // @public
 export const DividerRole: {
@@ -614,26 +644,32 @@ export const DividerRole: {
 };
 
 // @public
-export type DividerRole = typeof DividerRole[keyof typeof DividerRole];
+export type DividerRole = ValuesOf<typeof DividerRole>;
 
 // @public
-export function dividerTemplate(): ElementViewTemplate<FASTDivider>;
+export function dividerTemplate<T extends FASTDivider>(): ElementViewTemplate<T>;
 
 // @public
-export type EndOptions = {
-    end?: string | SyntheticViewTemplate;
+export type EndOptions<TSource = any, TParent = any> = {
+    end?: StaticallyComposableHTML<TSource, TParent>;
 };
 
 // @public
-export function endSlotTemplate(options: EndOptions): ViewTemplate<StartEnd>;
+export function endSlotTemplate<TSource extends StartEnd = StartEnd, TParent = any>(options: EndOptions<TSource, TParent>): CaptureType<TSource, TParent>;
 
 // @public
 export class FASTAccordion extends FASTElement {
-    // @internal (undocumented)
-    accordionItems: HTMLElement[];
-    // @internal (undocumented)
-    accordionItemsChanged(oldValue: HTMLElement[], newValue: HTMLElement[]): void;
+    // (undocumented)
+    protected accordionItems: Element[];
     expandmode: AccordionExpandMode;
+    // (undocumented)
+    expandmodeChanged(prev: AccordionExpandMode, next: AccordionExpandMode): void;
+    // @internal (undocumented)
+    handleChange(source: any, propertyName: string): void;
+    // @internal (undocumented)
+    slottedAccordionItems: HTMLElement[];
+    // @internal (undocumented)
+    slottedAccordionItemsChanged(oldValue: HTMLElement[], newValue: HTMLElement[]): void;
 }
 
 // Warning: (ae-different-release-tags) This symbol has another declaration with a different release tag
@@ -643,6 +679,7 @@ export class FASTAccordion extends FASTElement {
 export class FASTAccordionItem extends FASTElement {
     // @internal (undocumented)
     clickHandler: (e: MouseEvent) => void;
+    disabled: boolean;
     // @internal (undocumented)
     expandbutton: HTMLElement;
     expanded: boolean;
@@ -659,8 +696,6 @@ export interface FASTAccordionItem extends StartEnd {
 //
 // @public
 export class FASTAnchor extends FASTElement {
-    // @internal (undocumented)
-    connectedCallback(): void;
     control: HTMLAnchorElement;
     // @internal
     defaultSlottedContent: HTMLElement[];
@@ -749,7 +784,6 @@ export class FASTAnchoredRegion extends FASTElement {
 
 // @public
 export class FASTAvatar extends FASTElement {
-    link: string;
 }
 
 // @public
@@ -766,7 +800,6 @@ export class FASTBaseProgress extends FASTElement {
     min: number;
     // (undocumented)
     protected minChanged(): void;
-    paused: boolean;
     // @internal
     percentComplete: number;
     value: number | null;
@@ -807,8 +840,6 @@ export class FASTButton extends FormAssociatedButton {
     // (undocumented)
     control: HTMLButtonElement;
     defaultSlottedContent: HTMLElement[];
-    // @internal (undocumented)
-    disconnectedCallback(): void;
     formaction: string;
     // (undocumented)
     protected formactionChanged(): void;
@@ -835,6 +866,9 @@ export class FASTButton extends FormAssociatedButton {
 export interface FASTButton extends StartEnd, DelegatesARIAButton {
 }
 
+// Warning: (ae-different-release-tags) This symbol has another declaration with a different release tag
+// Warning: (ae-internal-mixed-release-tag) Mixed release tags are not allowed for "FASTCalendar" because one of its declarations is marked as @internal
+//
 // @public
 export class FASTCalendar extends FASTElement {
     dateFormatter: DateFormatter;
@@ -843,6 +877,7 @@ export class FASTCalendar extends FASTElement {
     // (undocumented)
     protected dayFormatChanged(): void;
     disabledDates: string;
+    firstDay: number;
     getDayClassNames(date: CalendarDateInfo, todayString?: string): string;
     getDays(info?: CalendarInfo, minWeeks?: number): CalendarDateInfo[][];
     getMonthInfo(month?: number, year?: number): CalendarInfo;
@@ -868,6 +903,10 @@ export class FASTCalendar extends FASTElement {
     protected yearFormatChanged(): void;
 }
 
+// @internal
+export interface FASTCalendar extends StartEnd {
+}
+
 // @public
 export class FASTCard extends FASTElement {
 }
@@ -886,9 +925,6 @@ export class FASTCheckbox extends FormAssociatedCheckbox {
     initialValue: string;
     // @internal (undocumented)
     keypressHandler: (e: KeyboardEvent) => void;
-    readOnly: boolean;
-    // (undocumented)
-    protected readOnlyChanged(): void;
 }
 
 // Warning: (ae-different-release-tags) This symbol has another declaration with a different release tag
@@ -898,6 +934,7 @@ export class FASTCheckbox extends FormAssociatedCheckbox {
 // @public
 export class FASTCombobox extends FormAssociatedCombobox {
     autocomplete: ComboboxAutocomplete | undefined;
+    cleanup: () => void;
     // @internal
     clickHandler(e: MouseEvent): boolean | void;
     // (undocumented)
@@ -906,6 +943,8 @@ export class FASTCombobox extends FormAssociatedCombobox {
     control: HTMLInputElement;
     // @internal
     disabledChanged(prev: boolean, next: boolean): void;
+    // (undocumented)
+    disconnectedCallback(): void;
     filteredOptions: FASTListboxOption[];
     filterOptions(): void;
     // @internal
@@ -924,8 +963,6 @@ export class FASTCombobox extends FormAssociatedCombobox {
     listbox: HTMLDivElement;
     // @internal
     listboxId: string;
-    // @internal
-    maxHeight: number;
     open: boolean;
     // @internal
     protected openChanged(): void;
@@ -934,10 +971,6 @@ export class FASTCombobox extends FormAssociatedCombobox {
     placeholder: string;
     // @internal
     protected placeholderChanged(): void;
-    position?: SelectPosition;
-    positionAttribute?: SelectPosition;
-    // (undocumented)
-    protected positionChanged(prev: SelectPosition | undefined, next: SelectPosition | undefined): void;
     // @internal
     selectedIndexChanged(prev: number | undefined, next: number): void;
     // @internal
@@ -960,7 +993,6 @@ export interface FASTCombobox extends StartEnd, DelegatesARIACombobox {
 
 // @public
 export class FASTDataGrid extends FASTElement {
-    constructor();
     cellItemTemplate?: ViewTemplate;
     columnDefinitions: ColumnDefinition[] | null;
     // (undocumented)
@@ -986,10 +1018,14 @@ export class FASTDataGrid extends FASTElement {
     handleKeydown(e: KeyboardEvent): void;
     // @internal (undocumented)
     handleRowFocus(e: Event): void;
+    // (undocumented)
+    handleRowSelectedChange(e: CustomEvent): void;
     headerCellItemTemplate?: ViewTemplate;
+    initialRowSelection: string;
     noTabbing: boolean;
     // (undocumented)
     protected noTabbingChanged(): void;
+    pageSize: number | undefined;
     // @internal
     rowElements: HTMLElement[];
     rowElementTag: string;
@@ -997,6 +1033,11 @@ export class FASTDataGrid extends FASTElement {
     rowsData: object[];
     // (undocumented)
     protected rowsDataChanged(): void;
+    rowSelectableCallback: (rowIndex: number, grid: FASTDataGrid) => boolean;
+    get selectedRowIndexes(): number[];
+    set selectedRowIndexes(next: number[]);
+    selectionBehavior: DataGridSelectionBehavior;
+    selectionMode: DataGridSelectionMode;
 }
 
 // @public
@@ -1042,11 +1083,13 @@ export class FASTDataGridRow extends FASTElement {
     gridTemplateColumns: string;
     // (undocumented)
     protected gridTemplateColumnsChanged(): void;
-    // (undocumented)
+    // @internal (undocumented)
     handleCellFocus(e: Event): void;
+    // @internal (undocumented)
+    handleClick(e: MouseEvent): void;
     // (undocumented)
     handleFocusout(e: FocusEvent): void;
-    // (undocumented)
+    // @internal (undocumented)
     handleKeydown(e: KeyboardEvent): void;
     headerCellItemTemplate?: ViewTemplate;
     // @internal
@@ -1056,8 +1099,14 @@ export class FASTDataGridRow extends FASTElement {
     protected rowDataChanged(): void;
     rowIndex: number;
     rowType: DataGridRowTypes;
+    // @internal
+    selected: boolean;
+    // @internal
+    selectionBehavior: DataGridSelectionBehavior;
     // @internal (undocumented)
     slottedCellElements: HTMLElement[];
+    // Warning: (ae-forgotten-export) The symbol "DataGridSelectionChangeDetail" needs to be exported by the entry point index.d.ts
+    toggleSelected(detail: DataGridSelectionChangeDetail): void;
 }
 
 // @public
@@ -1082,6 +1131,9 @@ export class FASTDialog extends FASTElement {
     show(): void;
 }
 
+// Warning: (ae-different-release-tags) This symbol has another declaration with a different release tag
+// Warning: (ae-internal-mixed-release-tag) Mixed release tags are not allowed for "FASTDisclosure" because one of its declarations is marked as @internal
+//
 // @public
 export class FASTDisclosure extends FASTElement {
     // @internal (undocumented)
@@ -1099,9 +1151,13 @@ export class FASTDisclosure extends FASTElement {
     toggle(): void;
 }
 
+// @internal
+export interface FASTDisclosure extends StartEnd {
+}
+
 // @public
 export class FASTDivider extends FASTElement {
-    orientation: Orientation;
+    orientation: DividerOrientation;
     role: DividerRole;
 }
 
@@ -1113,6 +1169,9 @@ export class FASTFlipper extends FASTElement {
     keyupHandler(e: Event & KeyboardEvent): void;
 }
 
+// Warning: (ae-different-release-tags) This symbol has another declaration with a different release tag
+// Warning: (ae-internal-mixed-release-tag) Mixed release tags are not allowed for "FASTHorizontalScroll" because one of its declarations is marked as @internal
+//
 // @public
 export class FASTHorizontalScroll extends FASTElement {
     // (undocumented)
@@ -1139,6 +1198,10 @@ export class FASTHorizontalScroll extends FASTElement {
     scrollToPrevious(): void;
     speed: number;
     view: HorizontalScrollView;
+}
+
+// @internal
+export interface FASTHorizontalScroll extends StartEnd {
 }
 
 // Warning: (ae-different-release-tags) This symbol has another declaration with a different release tag
@@ -1326,16 +1389,23 @@ export class FASTMenu extends FASTElement {
     // @internal (undocumented)
     disconnectedCallback(): void;
     focus(): void;
+    // (undocumented)
+    handleChange(source: any, propertyName: string): void;
     // @internal
     handleFocusOut: (e: FocusEvent) => void;
     // @internal (undocumented)
     handleMenuKeyDown(e: KeyboardEvent): void | boolean;
+    protected isMenuItemElement: (el: Element) => el is HTMLElement;
     // @internal (undocumented)
     readonly isNestedMenu: () => boolean;
     // @internal (undocumented)
-    items: HTMLSlotElement;
+    items: HTMLElement[];
     // (undocumented)
     protected itemsChanged(oldValue: HTMLElement[], newValue: HTMLElement[]): void;
+    // (undocumented)
+    protected menuItems: Element[] | undefined;
+    // (undocumented)
+    protected setItems(): void;
 }
 
 // Warning: (ae-different-release-tags) This symbol has another declaration with a different release tag
@@ -1346,16 +1416,13 @@ export class FASTMenuItem extends FASTElement {
     checked: boolean;
     // (undocumented)
     protected checkedChanged(oldValue: boolean, newValue: boolean): void;
-    // @internal (undocumented)
-    connectedCallback(): void;
-    // @internal
-    currentDirection: Direction;
+    cleanup: () => void;
     disabled: boolean;
     // @internal (undocumented)
     disconnectedCallback(): void;
     expanded: boolean;
     // (undocumented)
-    protected expandedChanged(oldValue: boolean): void;
+    protected expandedChanged(prev: boolean | undefined, next: boolean): void;
     // @internal (undocumented)
     handleMenuItemClick: (e: MouseEvent) => boolean;
     // @internal (undocumented)
@@ -1365,16 +1432,20 @@ export class FASTMenuItem extends FASTElement {
     // @internal (undocumented)
     handleMouseOver: (e: MouseEvent) => boolean;
     // @internal (undocumented)
-    hasSubmenu: boolean;
+    get hasSubmenu(): boolean;
+    hidden: boolean;
     role: MenuItemRole;
+    // @internal
+    slottedSubmenu: HTMLElement[];
+    // @internal
+    protected slottedSubmenuChanged(prev: HTMLElement[] | undefined, next: HTMLElement[]): void;
     // @internal (undocumented)
-    startColumnCount: MenuItemColumnCount;
-    // @internal (undocumented)
-    submenu: Element | undefined;
+    submenu: HTMLElement | undefined;
+    // @internal
+    submenuContainer: HTMLDivElement;
     // @internal (undocumented)
     submenuLoaded: () => void;
-    // @internal
-    submenuRegion: FASTAnchoredRegion;
+    updateSubmenu(): void;
 }
 
 // @internal
@@ -1591,8 +1662,6 @@ export class FASTProgressRing extends FASTBaseProgress {
 // @public
 export class FASTRadio extends FormAssociatedRadio implements RadioControl {
     constructor();
-    // @beta
-    clickHandler(e: MouseEvent): boolean | void;
     // @internal (undocumented)
     connectedCallback(): void;
     // @internal (undocumented)
@@ -1604,9 +1673,6 @@ export class FASTRadio extends FormAssociatedRadio implements RadioControl {
     // @beta
     keypressHandler(e: KeyboardEvent): boolean | void;
     name: string;
-    readOnly: boolean;
-    // (undocumented)
-    protected readOnlyChanged(): void;
 }
 
 // @public
@@ -1614,7 +1680,7 @@ export class FASTRadioGroup extends FASTElement {
     // (undocumented)
     childItems: HTMLElement[];
     // @internal (undocumented)
-    clickHandler: (e: MouseEvent) => void;
+    clickHandler: (e: MouseEvent) => void | boolean;
     // @internal (undocumented)
     connectedCallback(): void;
     disabled: boolean;
@@ -1624,15 +1690,15 @@ export class FASTRadioGroup extends FASTElement {
     disconnectedCallback(): void;
     // @internal (undocumented)
     focusOutHandler: (e: FocusEvent) => boolean | void;
+    // @internal (undocumented)
+    handleDisabledClick: (e: MouseEvent) => void | boolean;
     // @internal
     keydownHandler: (e: KeyboardEvent) => boolean | void;
     name: string;
     // (undocumented)
     protected nameChanged(): void;
-    orientation: Orientation | "horizontal" | "vertical";
+    orientation: RadioGroupOrientation;
     readOnly: boolean;
-    // (undocumented)
-    protected readOnlyChanged(): void;
     // @internal (undocumented)
     slottedRadioButtons: HTMLElement[];
     // (undocumented)
@@ -1701,6 +1767,7 @@ export interface FASTSearch extends StartEnd, DelegatesARIASearch {
 //
 // @public
 export class FASTSelect extends FormAssociatedSelect {
+    cleanup: () => void;
     // @internal
     clickHandler(e: MouseEvent): boolean | void;
     // @internal
@@ -1726,18 +1793,12 @@ export class FASTSelect extends FormAssociatedSelect {
     listbox: HTMLDivElement;
     // @internal
     listboxId: string;
-    // @internal
-    maxHeight: number;
     // @internal @override
     mousedownHandler(e: MouseEvent): boolean | void;
     multipleChanged(prev: boolean | undefined, next: boolean): void;
     open: boolean;
     // @internal
     protected openChanged(prev: boolean | undefined, next: boolean): void;
-    position?: SelectPosition;
-    positionAttribute?: SelectPosition;
-    // (undocumented)
-    protected positionChanged(prev: SelectPosition | undefined, next: SelectPosition | undefined): void;
     // @internal
     selectedIndexChanged(prev: number | undefined, next: number): void;
     // @internal @override
@@ -1769,6 +1830,8 @@ export class FASTSkeleton extends FASTElement {
 //
 // @public
 export class FASTSlider extends FormAssociatedSlider implements SliderConfiguration {
+    // @internal
+    calculateNewValue(rawValue: number): number;
     // @internal (undocumented)
     connectedCallback(): void;
     decrement(): void;
@@ -1784,15 +1847,23 @@ export class FASTSlider extends FormAssociatedSlider implements SliderConfigurat
     // (undocumented)
     protected keypressHandler: (e: KeyboardEvent) => void;
     max: number;
+    // (undocumented)
+    protected maxChanged(): void;
     min: number;
+    // (undocumented)
+    protected minChanged(): void;
     mode: SliderMode;
     orientation: Orientation;
+    // (undocumented)
+    protected orientationChanged(): void;
     // @internal (undocumented)
     position: string;
     readOnly: boolean;
     // (undocumented)
     protected readOnlyChanged(): void;
-    step: number;
+    step: number | undefined;
+    // (undocumented)
+    protected stepChanged(): void;
     // @internal (undocumented)
     stepMultiplier: number;
     // @internal (undocumented)
@@ -1826,6 +1897,10 @@ export class FASTSliderLabel extends FASTElement {
     // @internal (undocumented)
     handleChange(source: any, propertyName: string): void;
     hideMark: boolean;
+    // @deprecated
+    orientation: SliderOrientation;
+    // @internal (undocumented)
+    protected orientationChanged(): void;
     position: string;
     // (undocumented)
     protected positionChanged(): void;
@@ -1839,10 +1914,6 @@ export class FASTSliderLabel extends FASTElement {
     sliderMaxPosition: number;
     // @internal (undocumented)
     sliderMinPosition: number;
-    // @internal (undocumented)
-    sliderOrientation: Orientation;
-    // @internal (undocumented)
-    protected sliderOrientationChanged(): void;
 }
 
 // Warning: (ae-forgotten-export) The symbol "FormAssociatedSwitch" needs to be exported by the entry point index.d.ts
@@ -1850,8 +1921,6 @@ export class FASTSliderLabel extends FASTElement {
 // @public
 export class FASTSwitch extends FormAssociatedSwitch {
     constructor();
-    // @internal (undocumented)
-    checkedChanged(prev: boolean | undefined, next: boolean): void;
     // @internal (undocumented)
     clickHandler: (e: MouseEvent) => void;
     // @internal (undocumented)
@@ -1889,18 +1958,15 @@ export class FASTTabs extends FASTElement {
     activeid: string;
     // @internal (undocumented)
     activeidChanged(oldValue: string, newValue: string): void;
-    // @internal (undocumented)
-    activeIndicatorRef: HTMLElement;
     activetab: HTMLElement;
     adjust(adjustment: number): void;
     // @internal (undocumented)
     connectedCallback(): void;
-    hideActiveIndicator: boolean;
     orientation: TabsOrientation;
     // @internal (undocumented)
     orientationChanged(): void;
-    // @internal (undocumented)
-    showActiveIndicator: boolean;
+    // (undocumented)
+    protected setTabs: () => void;
     // @internal (undocumented)
     tabpanels: HTMLElement[];
     // @internal (undocumented)
@@ -2037,7 +2103,7 @@ export class FASTToolbar extends FASTElement {
     focusinHandler(e: FocusEvent): boolean | void;
     // @internal
     keydownHandler(e: KeyboardEvent): boolean | void;
-    orientation: Orientation;
+    orientation: ToolbarOrientation;
     // @internal
     protected reduceFocusableElements(): void;
     // @internal
@@ -2055,51 +2121,34 @@ export interface FASTToolbar extends StartEnd, DelegatesARIAToolbar {
 // @public
 export class FASTTooltip extends FASTElement {
     anchor: string;
-    // (undocumented)
-    protected anchorChanged(): void;
-    anchorElement: HTMLElement | null;
-    // (undocumented)
-    protected anchorElementChanged(oldValue: HTMLElement | null): void;
-    autoUpdateMode: AutoUpdateMode;
+    // @internal
+    protected anchorChanged(prev: string | undefined, next: string): void;
+    // @internal
+    anchorElement: Element | null;
+    cleanup: () => void;
     // (undocumented)
     connectedCallback(): void;
     // @internal
-    currentDirection: Direction;
-    delay: number;
-    // (undocumented)
-    disconnectedCallback(): void;
+    protected controlledVisibilityChanged(prev: boolean | undefined, next: boolean): void;
     // @internal
-    handlePositionChange: (ev: Event) => void;
-    // @internal (undocumented)
-    horizontalDefaultPosition: string | undefined;
-    // @internal (undocumented)
-    horizontalInset: string;
-    // @internal (undocumented)
-    horizontalPositioningMode: AxisPositioningMode;
-    // @internal (undocumented)
-    horizontalScaling: AxisScalingMode;
-    horizontalViewportLock: boolean;
-    position: TooltipPosition;
+    protected focusinAnchorHandler: () => void;
     // @internal
-    region: FASTAnchoredRegion;
-    // @internal (undocumented)
-    tooltipVisible: boolean;
-    // @internal (undocumented)
-    verticalDefaultPosition: string | undefined;
-    // @internal (undocumented)
-    verticalInset: string;
-    // @internal (undocumented)
-    verticalPositioningMode: AxisPositioningMode;
-    // @internal (undocumented)
-    verticalScaling: AxisScalingMode;
-    verticalViewportLock: boolean;
+    protected focusoutAnchorHandler: () => void;
     // @internal
-    viewportElement: HTMLElement | null;
+    hideTooltip(): void;
+    id: string;
     // (undocumented)
-    protected viewportElementChanged(): void;
-    visible: boolean;
+    idChanged(prev: string, next: string): void;
+    placement: TooltipPlacement;
+    // @internal
+    protected positionStyles: ElementStyles;
+    // @internal
+    protected positionStylesChanged(prev: ElementStyles | undefined, next: ElementStyles | undefined): void;
+    setPositioning(): void;
+    show: boolean | undefined;
     // (undocumented)
-    protected visibleChanged(): void;
+    showChanged(prev: boolean | undefined, next: boolean | undefined): void;
+    get visible(): boolean | undefined;
 }
 
 // Warning: (ae-different-release-tags) This symbol has another declaration with a different release tag
@@ -2108,7 +2157,7 @@ export class FASTTooltip extends FASTElement {
 // @public
 export class FASTTreeItem extends FASTElement {
     // @internal
-    childItemLength(): number;
+    get childItemLength(): number;
     // @internal (undocumented)
     childItems: HTMLElement[];
     disabled: boolean;
@@ -2116,7 +2165,7 @@ export class FASTTreeItem extends FASTElement {
     expandCollapseButton: HTMLDivElement;
     expanded: boolean;
     // (undocumented)
-    protected expandedChanged(): void;
+    protected expandedChanged(prev: boolean | undefined, next: boolean): void;
     // @internal
     focusable: boolean;
     static focusItem(el: HTMLElement): void;
@@ -2128,14 +2177,16 @@ export class FASTTreeItem extends FASTElement {
     handleFocus: (e: FocusEvent) => void;
     readonly isNestedItem: () => boolean;
     // @internal
+    readonly isTreeItem: boolean;
+    // @internal
     items: HTMLElement[];
     // (undocumented)
     protected itemsChanged(oldValue: unknown, newValue: HTMLElement[]): void;
-    // @internal
+    // @deprecated
     nested: boolean;
     selected: boolean;
     // (undocumented)
-    protected selectedChanged(): void;
+    protected selectedChanged(prev: boolean | undefined, next: boolean): void;
 }
 
 // @internal
@@ -2174,16 +2225,16 @@ export const FlipperDirection: {
 };
 
 // @public
-export type FlipperDirection = typeof FlipperDirection[keyof typeof FlipperDirection];
+export type FlipperDirection = ValuesOf<typeof FlipperDirection>;
 
 // @public
 export type FlipperOptions = {
-    next?: string | SyntheticViewTemplate;
-    previous?: string | SyntheticViewTemplate;
+    next?: StaticallyComposableHTML<FASTFlipper>;
+    previous?: StaticallyComposableHTML<FASTFlipper>;
 };
 
 // @public
-export function flipperTemplate(options?: FlipperOptions): ElementViewTemplate<FASTFlipper>;
+export function flipperTemplate<T extends FASTFlipper>(options?: FlipperOptions): ElementViewTemplate<T>;
 
 // @public
 export const FlyoutPosBottom: AnchoredRegionConfig;
@@ -2288,12 +2339,12 @@ export const GenerateHeaderOptions: {
 };
 
 // @public
-export type GenerateHeaderOptions = typeof GenerateHeaderOptions[keyof typeof GenerateHeaderOptions];
+export type GenerateHeaderOptions = ValuesOf<typeof GenerateHeaderOptions>;
 
 // @public
 export const getDirection: (rootNode: HTMLElement) => Direction;
 
-// @public @deprecated
+// @public
 export const hidden = ":host([hidden]){display:none}";
 
 // @public
@@ -2307,16 +2358,16 @@ export const HorizontalPosition: {
 };
 
 // @public
-export type HorizontalPosition = typeof HorizontalPosition[keyof typeof HorizontalPosition];
+export type HorizontalPosition = ValuesOf<typeof HorizontalPosition>;
 
 // @public
-export type HorizontalScrollOptions = StartEndOptions & {
-    nextFlipper?: SyntheticViewTemplate | string;
-    previousFlipper?: SyntheticViewTemplate | string;
+export type HorizontalScrollOptions = StartEndOptions<FASTHorizontalScroll> & {
+    nextFlipper?: StaticallyComposableHTML<FASTHorizontalScroll>;
+    previousFlipper?: StaticallyComposableHTML<FASTHorizontalScroll>;
 };
 
 // @public (undocumented)
-export function horizontalScrollTemplate(options?: HorizontalScrollOptions): ElementViewTemplate<FASTHorizontalScroll>;
+export function horizontalScrollTemplate<T extends FASTHorizontalScroll>(options?: HorizontalScrollOptions): ElementViewTemplate<T>;
 
 // @public
 export const HorizontalScrollView: {
@@ -2325,12 +2376,12 @@ export const HorizontalScrollView: {
 };
 
 // @public
-export type HorizontalScrollView = typeof HorizontalScrollView[keyof typeof HorizontalScrollView];
+export type HorizontalScrollView = ValuesOf<typeof HorizontalScrollView>;
 
 // Warning: (ae-internal-missing-underscore) The name "interactiveCalendarGridTemplate" should be prefixed with an underscore because the declaration is marked as @internal
 //
 // @internal
-export function interactiveCalendarGridTemplate(options: CalendarOptions, todayString: string): ViewTemplate<FASTCalendar>;
+export function interactiveCalendarGridTemplate<T extends FASTCalendar>(options: CalendarOptions, todayString: string): ViewTemplate<T>;
 
 // @public
 export function isListboxOption(el: Element): el is FASTListboxOption;
@@ -2342,31 +2393,31 @@ export function isTreeItemElement(el: Element): el is HTMLElement;
 export const lightModeStylesheetBehavior: (styles: ElementStyles) => MatchMediaStyleSheetBehavior;
 
 // @public
-export type ListboxOptionOptions = StartEndOptions;
+export type ListboxOptionOptions = StartEndOptions<FASTListboxOption>;
 
 // @public
-export function listboxOptionTemplate(options?: ListboxOptionOptions): ElementViewTemplate<FASTListboxOption>;
+export function listboxOptionTemplate<T extends FASTListboxOption>(options?: ListboxOptionOptions): ElementViewTemplate<T>;
 
 // @public
-export function listboxTemplate(): ElementViewTemplate<FASTListboxElement>;
+export function listboxTemplate<T extends FASTListboxElement>(): ElementViewTemplate<T>;
 
 // @public
-export abstract class MatchMediaBehavior implements Behavior {
+export abstract class MatchMediaBehavior implements HostBehavior {
     constructor(query: MediaQueryList);
-    bind(source: typeof FASTElement & HTMLElement): void;
-    protected abstract constructListener(source: typeof FASTElement): MediaQueryListListener;
+    connectedCallback(controller: HostController): void;
+    protected abstract constructListener(controller: HostController): MediaQueryListListener;
+    disconnectedCallback(controller: HostController): void;
     readonly query: MediaQueryList;
-    unbind(source: typeof FASTElement & HTMLElement): void;
 }
 
 // @public
 export class MatchMediaStyleSheetBehavior extends MatchMediaBehavior {
     constructor(query: MediaQueryList, styles: ElementStyles);
-    protected constructListener(source: typeof FASTElement): MediaQueryListListener;
+    protected constructListener(controller: HostController): MediaQueryListListener;
     readonly query: MediaQueryList;
-    readonly styles: ElementStyles;
     // @internal
-    unbind(source: typeof FASTElement & HTMLElement): void;
+    removedCallback(controller: HostController<any>): void;
+    readonly styles: ElementStyles;
     static with(query: MediaQueryList): (styles: ElementStyles) => MatchMediaStyleSheetBehavior;
 }
 
@@ -2374,14 +2425,10 @@ export class MatchMediaStyleSheetBehavior extends MatchMediaBehavior {
 export type MediaQueryListListener = (this: MediaQueryList, ev?: MediaQueryListEvent) => void;
 
 // @public
-export type MenuItemColumnCount = 0 | 1 | 2;
-
-// @public
-export type MenuItemOptions = StartEndOptions & {
-    checkboxIndicator?: string | SyntheticViewTemplate;
-    expandCollapseGlyph?: string | SyntheticViewTemplate;
-    radioIndicator?: string | SyntheticViewTemplate;
-    anchoredRegion: TemplateElementDependency;
+export type MenuItemOptions = StartEndOptions<FASTMenuItem> & {
+    checkboxIndicator?: StaticallyComposableHTML<FASTMenuItem>;
+    expandCollapseGlyph?: StaticallyComposableHTML<FASTMenuItem>;
+    radioIndicator?: StaticallyComposableHTML<FASTMenuItem>;
 };
 
 // @public
@@ -2392,10 +2439,10 @@ export const MenuItemRole: {
 };
 
 // @public
-export type MenuItemRole = typeof MenuItemRole[keyof typeof MenuItemRole];
+export type MenuItemRole = ValuesOf<typeof MenuItemRole>;
 
 // @public
-export function menuItemTemplate(options: MenuItemOptions): ElementViewTemplate<FASTMenuItem>;
+export function menuItemTemplate<T extends FASTMenuItem>(options?: MenuItemOptions): ElementViewTemplate<T>;
 
 // @beta
 export const MenuPlacement: {
@@ -2408,10 +2455,10 @@ export const MenuPlacement: {
 };
 
 // @beta
-export type MenuPlacement = typeof MenuPlacement[keyof typeof MenuPlacement];
+export type MenuPlacement = ValuesOf<typeof MenuPlacement>;
 
 // @public
-export function menuTemplate(): ElementViewTemplate<FASTMenu>;
+export function menuTemplate<T extends FASTMenu>(): ElementViewTemplate<T>;
 
 // @public
 export const MonthFormat: {
@@ -2423,7 +2470,7 @@ export const MonthFormat: {
 };
 
 // @public
-export type MonthFormat = typeof MonthFormat[keyof typeof MonthFormat];
+export type MonthFormat = ValuesOf<typeof MonthFormat>;
 
 // @public
 export type MonthInfo = {
@@ -2436,36 +2483,36 @@ export type MonthInfo = {
 // Warning: (ae-internal-missing-underscore) The name "noninteractiveCalendarTemplate" should be prefixed with an underscore because the declaration is marked as @internal
 //
 // @internal
-export function noninteractiveCalendarTemplate(options: CalendarOptions, todayString: string): ViewTemplate<FASTCalendar>;
+export function noninteractiveCalendarTemplate<T extends FASTCalendar>(options: CalendarOptions, todayString: string): ViewTemplate<T>;
 
 // @public
-export type NumberFieldOptions = StartEndOptions & {
-    stepDownGlyph?: string | SyntheticViewTemplate;
-    stepUpGlyph?: string | SyntheticViewTemplate;
+export type NumberFieldOptions = StartEndOptions<FASTNumberField> & {
+    stepDownGlyph?: StaticallyComposableHTML<FASTNumberField>;
+    stepUpGlyph?: StaticallyComposableHTML<FASTNumberField>;
 };
 
 // @public
-export function numberFieldTemplate(options?: NumberFieldOptions): ElementViewTemplate<FASTNumberField>;
+export function numberFieldTemplate<T extends FASTNumberField>(options?: NumberFieldOptions): ElementViewTemplate<T>;
 
 // Warning: (ae-incompatible-release-tags) The symbol "pickerListItemTemplate" is marked as @public, but its signature references "FASTPickerListItem" which is marked as @beta
 //
 // @public (undocumented)
-export function pickerListItemTemplate(): ElementViewTemplate<FASTPickerListItem>;
+export function pickerListItemTemplate<T extends FASTPickerListItem>(): ElementViewTemplate<T>;
 
 // Warning: (ae-incompatible-release-tags) The symbol "pickerListTemplate" is marked as @public, but its signature references "FASTPickerList" which is marked as @beta
 //
 // @public (undocumented)
-export function pickerListTemplate(): ElementViewTemplate<FASTPickerList>;
+export function pickerListTemplate<T extends FASTPickerList>(): ElementViewTemplate<T>;
 
 // Warning: (ae-incompatible-release-tags) The symbol "pickerMenuOptionTemplate" is marked as @public, but its signature references "FASTPickerMenuOption" which is marked as @beta
 //
 // @public (undocumented)
-export function pickerMenuOptionTemplate(): ElementViewTemplate<FASTPickerMenuOption>;
+export function pickerMenuOptionTemplate<T extends FASTPickerMenuOption>(): ElementViewTemplate<T>;
 
 // Warning: (ae-incompatible-release-tags) The symbol "pickerMenuTemplate" is marked as @public, but its signature references "FASTPickerMenu" which is marked as @beta
 //
 // @public
-export function pickerMenuTemplate(): ElementViewTemplate<FASTPickerMenu>;
+export function pickerMenuTemplate<T extends FASTPickerMenu>(): ElementViewTemplate<T>;
 
 // @public
 export type PickerOptions = {
@@ -2480,32 +2527,32 @@ export type PickerOptions = {
 // Warning: (ae-incompatible-release-tags) The symbol "pickerTemplate" is marked as @public, but its signature references "FASTPicker" which is marked as @beta
 //
 // @public
-export function pickerTemplate(options: PickerOptions): ElementViewTemplate<FASTPicker>;
+export function pickerTemplate<T extends FASTPicker>(options: PickerOptions): ElementViewTemplate<T>;
 
 // @public
 export type ProgressOptions = {
-    indeterminateIndicator1?: string | SyntheticViewTemplate;
-    indeterminateIndicator2?: string | SyntheticViewTemplate;
+    indeterminateIndicator1?: StaticallyComposableHTML<FASTProgress>;
+    indeterminateIndicator2?: StaticallyComposableHTML<FASTProgress>;
 };
 
 // @public
 export type ProgressRingOptions = {
-    indeterminateIndicator?: string | SyntheticViewTemplate;
+    indeterminateIndicator?: StaticallyComposableHTML<FASTProgressRing>;
 };
 
 // @public
-export function progressRingTemplate(options?: ProgressRingOptions): ElementViewTemplate<FASTProgressRing>;
+export function progressRingTemplate<T extends FASTProgressRing>(options?: ProgressRingOptions): ElementViewTemplate<T>;
 
 // @public
-export function progressTemplate(options?: ProgressOptions): ElementViewTemplate<FASTProgress>;
+export function progressTemplate<T extends FASTProgress>(options?: ProgressOptions): ElementViewTemplate<T>;
 
 // @public
-export class PropertyStyleSheetBehavior implements Behavior {
+export class PropertyStyleSheetBehavior implements HostBehavior {
     constructor(propertyName: string, value: any, styles: ElementStyles);
-    bind(elementInstance: FASTElement): void;
+    addedCallback(controller: HostController): void;
     // @internal
     handleChange(source: FASTElement, key: string): void;
-    unbind(source: typeof FASTElement & HTMLElement): void;
+    removedCallback(controller: HostController): void;
 }
 
 // @public
@@ -2520,27 +2567,36 @@ export interface PropertyTarget {
 export type ProxyElement = HTMLSelectElement | HTMLTextAreaElement | HTMLInputElement;
 
 // @public
-export type RadioControl = Pick<HTMLInputElement, "checked" | "disabled" | "readOnly" | "focus" | "setAttribute" | "getAttribute">;
+export type RadioControl = Pick<HTMLInputElement, "checked" | "disabled" | "focus" | "setAttribute" | "getAttribute">;
 
 // @public
-export function radioGroupTemplate(): ElementViewTemplate<FASTRadioGroup>;
-
-// @public
-export type RadioOptions = {
-    checkedIndicator?: string | SyntheticViewTemplate;
+export const RadioGroupOrientation: {
+    readonly horizontal: "horizontal";
+    readonly vertical: "vertical";
 };
 
 // @public
-export function radioTemplate(options?: RadioOptions): ElementViewTemplate<FASTRadio>;
+export type RadioGroupOrientation = ValuesOf<typeof RadioGroupOrientation>;
+
+// @public
+export function radioGroupTemplate<T extends FASTRadioGroup>(): ElementViewTemplate<T>;
+
+// @public
+export type RadioOptions = {
+    checkedIndicator?: StaticallyComposableHTML<FASTRadio>;
+};
+
+// @public
+export function radioTemplate<T extends FASTRadio>(options?: RadioOptions): ElementViewTemplate<T>;
 
 // @beta
-export function reflectAttributes<T = any>(...attributes: string[]): CaptureType<T>;
+export function reflectAttributes<TSource = any, TParent = any>(...attributes: string[]): CaptureType<TSource, TParent>;
 
 // Warning: (ae-internal-missing-underscore) The name "roleForMenuItem" should be prefixed with an underscore because the declaration is marked as @internal
 //
 // @internal (undocumented)
 export const roleForMenuItem: {
-    [value in keyof typeof MenuItemRole]: typeof MenuItemRole[value];
+    [value in keyof typeof MenuItemRole]: (typeof MenuItemRole)[value];
 };
 
 // @public
@@ -2552,30 +2608,21 @@ export const ScrollEasing: {
 };
 
 // @public
-export type ScrollEasing = typeof ScrollEasing[keyof typeof ScrollEasing];
+export type ScrollEasing = ValuesOf<typeof ScrollEasing>;
 
 // @public
-export type SearchOptions = StartEndOptions;
+export type SearchOptions = StartEndOptions<FASTSearch>;
 
 // @public
-export function searchTemplate(options?: SearchOptions): ElementViewTemplate<FASTSearch>;
+export function searchTemplate<T extends FASTSearch>(options?: SearchOptions): ElementViewTemplate<T>;
 
 // @public
-export type SelectOptions = StartEndOptions & {
-    indicator?: string | SyntheticViewTemplate;
+export type SelectOptions = StartEndOptions<FASTSelect> & {
+    indicator?: StaticallyComposableHTML<FASTSelect>;
 };
 
 // @public
-export const SelectPosition: {
-    readonly above: "above";
-    readonly below: "below";
-};
-
-// @public
-export type SelectPosition = typeof SelectPosition[keyof typeof SelectPosition];
-
-// @public
-export function selectTemplate(options?: SelectOptions): ElementViewTemplate<FASTSelect>;
+export function selectTemplate<T extends FASTSelect>(options?: SelectOptions): ElementViewTemplate<T>;
 
 // @public
 export const SkeletonShape: {
@@ -2584,10 +2631,10 @@ export const SkeletonShape: {
 };
 
 // @public (undocumented)
-export type SkeletonShape = typeof SkeletonShape[keyof typeof SkeletonShape];
+export type SkeletonShape = ValuesOf<typeof SkeletonShape>;
 
 // @public
-export function skeletonTemplate(): ElementViewTemplate<FASTSkeleton>;
+export function skeletonTemplate<T extends FASTSkeleton>(): ElementViewTemplate<T>;
 
 // @public
 export interface SliderConfiguration {
@@ -2600,11 +2647,11 @@ export interface SliderConfiguration {
     // (undocumented)
     min: number;
     // (undocumented)
-    orientation?: Orientation;
+    orientation?: SliderOrientation;
 }
 
 // @public
-export function sliderLabelTemplate(): ElementViewTemplate<FASTSliderLabel>;
+export function sliderLabelTemplate<T extends FASTSliderLabel>(): ElementViewTemplate<T>;
 
 // @public
 export const SliderMode: {
@@ -2612,15 +2659,24 @@ export const SliderMode: {
 };
 
 // @public
-export type SliderMode = typeof SliderMode[keyof typeof SliderMode];
+export type SliderMode = ValuesOf<typeof SliderMode>;
 
 // @public
 export type SliderOptions = {
-    thumb?: string | SyntheticViewTemplate;
+    thumb?: StaticallyComposableHTML<FASTSlider>;
 };
 
 // @public
-export function sliderTemplate(options?: SliderOptions): ElementViewTemplate<FASTSlider>;
+export const SliderOrientation: {
+    readonly horizontal: "horizontal";
+    readonly vertical: "vertical";
+};
+
+// @public
+export type SliderOrientation = ValuesOf<typeof SliderOrientation>;
+
+// @public
+export function sliderTemplate<T extends FASTSlider>(options?: SliderOptions): ElementViewTemplate<T>;
 
 // @public
 export class StartEnd {
@@ -2631,15 +2687,21 @@ export class StartEnd {
 }
 
 // @public
-export type StartEndOptions = StartOptions & EndOptions;
+export type StartEndOptions<TSource = any, TParent = any> = StartOptions<TSource, TParent> & EndOptions<TSource, TParent>;
 
 // @public
-export type StartOptions = {
-    start?: string | SyntheticViewTemplate;
+export type StartOptions<TSource = any, TParent = any> = {
+    start?: StaticallyComposableHTML<TSource, TParent>;
 };
 
 // @public
-export function startSlotTemplate(options: StartOptions): ViewTemplate<StartEnd>;
+export function startSlotTemplate<TSource extends StartEnd = StartEnd, TParent = any>(options: StartOptions<TSource, TParent>): CaptureType<TSource, TParent>;
+
+// @public
+export type StaticallyComposableHTML<TSource = any, TParent = any> = string | HTMLDirective | SyntheticViewTemplate<TSource, TParent> | undefined;
+
+// @public
+export function staticallyCompose<TSource = any, TParent = any>(item: StaticallyComposableHTML<TSource, TParent>): CaptureType<TSource, TParent>;
 
 // @public
 export type StaticDesignTokenValue<T> = T extends (...args: any[]) => any ? DerivedDesignTokenValue<T> : T;
@@ -2649,35 +2711,35 @@ export const supportsElementInternals: boolean;
 
 // @public
 export type SwitchOptions = {
-    switch?: string | SyntheticViewTemplate;
+    switch?: StaticallyComposableHTML<FASTSwitch>;
 };
 
 // @public
-export function switchTemplate(options?: SwitchOptions): ElementViewTemplate<FASTSwitch>;
+export function switchTemplate<T extends FASTSwitch>(options?: SwitchOptions): ElementViewTemplate<T>;
 
 // @public
-export type TabOptionOptions = StartEndOptions;
+export type TabOptions = StartEndOptions<FASTTab>;
 
 // @public
-export function tabPanelTemplate(): ElementViewTemplate<FASTTabPanel>;
+export function tabPanelTemplate<T extends FASTTabPanel>(): ElementViewTemplate<T>;
 
 // @public
-export type TabsOptions = StartEndOptions;
+export type TabsOptions = StartEndOptions<FASTTabs>;
 
 // @public
 export const TabsOrientation: {
-    readonly vertical: "vertical";
     readonly horizontal: "horizontal";
+    readonly vertical: "vertical";
 };
 
 // @public
-export type TabsOrientation = typeof TabsOrientation[keyof typeof TabsOrientation];
+export type TabsOrientation = ValuesOf<typeof TabsOrientation>;
 
 // @public
-export function tabsTemplate(options?: TabsOptions): ElementViewTemplate<FASTTabs>;
+export function tabsTemplate<T extends FASTTabs>(options?: TabsOptions): ElementViewTemplate<T>;
 
 // @public
-export function tabTemplate(options?: StartEndOptions): ElementViewTemplate<FASTTab>;
+export function tabTemplate<T extends FASTTab>(options?: TabOptions): ElementViewTemplate<T>;
 
 // @beta
 export function tagFor(dependency: TemplateElementDependency): string;
@@ -2694,16 +2756,16 @@ export const TextAreaResize: {
 };
 
 // @public
-export type TextAreaResize = typeof TextAreaResize[keyof typeof TextAreaResize];
+export type TextAreaResize = ValuesOf<typeof TextAreaResize>;
 
 // @public
-export function textAreaTemplate(): ElementViewTemplate<FASTTextArea>;
+export function textAreaTemplate<T extends FASTTextArea>(): ElementViewTemplate<T>;
 
 // @public
-export type TextFieldOptions = StartEndOptions;
+export type TextFieldOptions = StartEndOptions<FASTTextField>;
 
 // @public
-export function textFieldTemplate(options?: TextFieldOptions): ElementViewTemplate<FASTTextField>;
+export function textFieldTemplate<T extends FASTTextField>(options?: TextFieldOptions): ElementViewTemplate<T>;
 
 // @public
 export const TextFieldType: {
@@ -2715,56 +2777,58 @@ export const TextFieldType: {
 };
 
 // @public
-export type TextFieldType = typeof TextFieldType[keyof typeof TextFieldType];
+export type TextFieldType = ValuesOf<typeof TextFieldType>;
 
 // @public
-export type ToolbarOptions = StartEndOptions;
+export type ToolbarOptions = StartEndOptions<FASTToolbar>;
 
 // @public
-export function toolbarTemplate(options?: ToolbarOptions): ElementViewTemplate<FASTToolbar>;
-
-// @public
-export type TooltipOptions = {
-    anchoredRegion: TemplateElementDependency;
+export const ToolbarOrientation: {
+    readonly horizontal: "horizontal";
+    readonly vertical: "vertical";
 };
 
 // @public
-export const TooltipPosition: {
-    readonly top: "top";
-    readonly right: "right";
+export type ToolbarOrientation = ValuesOf<typeof ToolbarOrientation>;
+
+// @public
+export function toolbarTemplate<T extends FASTToolbar>(options?: ToolbarOptions): ElementViewTemplate<T>;
+
+// @public
+export const TooltipPlacement: {
     readonly bottom: "bottom";
-    readonly left: "left";
-    readonly center: "center";
-    readonly start: "start";
-    readonly end: "end";
-    readonly topLeft: "top-left";
-    readonly topCenter: "top-center";
-    readonly topRight: "top-right";
-    readonly bottomLeft: "bottom-left";
-    readonly bottomCenter: "bottom-center";
-    readonly bottomRight: "bottom-right";
-    readonly topStart: "top-start";
-    readonly topEnd: "top-end";
-    readonly bottomStart: "bottom-start";
     readonly bottomEnd: "bottom-end";
+    readonly bottomStart: "bottom-start";
+    readonly left: "left";
+    readonly leftEnd: "left-end";
+    readonly leftStart: "left-start";
+    readonly right: "right";
+    readonly rightEnd: "right-end";
+    readonly rightStart: "right-start";
+    readonly top: "top";
+    readonly topEnd: "top-end";
+    readonly topStart: "top-start";
 };
 
 // @public
-export type TooltipPosition = typeof TooltipPosition[keyof typeof TooltipPosition];
+export type TooltipPlacement = ValuesOf<typeof TooltipPlacement>;
 
 // @public
-export function tooltipTemplate(options: TooltipOptions): ElementViewTemplate<FASTTooltip>;
+export function tooltipTemplate<T extends FASTTooltip>(): ElementViewTemplate<T>;
 
 // @public
-export type TreeItemOptions = StartEndOptions & {
-    expandCollapseGlyph?: string | SyntheticViewTemplate;
+export type TreeItemOptions = StartEndOptions<FASTTreeItem> & {
+    expandCollapseGlyph?: StaticallyComposableHTML<FASTTreeItem>;
 };
 
 // @public
-export function treeItemTemplate(options?: TreeItemOptions): ElementViewTemplate<FASTTreeItem>;
+export function treeItemTemplate<T extends FASTTreeItem>(options?: TreeItemOptions): ElementViewTemplate<T>;
 
 // @public
-export function treeViewTemplate(): ElementViewTemplate<FASTTreeView>;
+export function treeViewTemplate<T extends FASTTreeView>(): ElementViewTemplate<T>;
+
+// @public
+export type ValuesOf<T> = T[keyof T];
 
 // @public
 export const VerticalPosition: {
@@ -2775,7 +2839,7 @@ export const VerticalPosition: {
 };
 
 // @public
-export type VerticalPosition = typeof VerticalPosition[keyof typeof VerticalPosition];
+export type VerticalPosition = ValuesOf<typeof VerticalPosition>;
 
 // @public
 export const WeekdayFormat: {
@@ -2785,7 +2849,7 @@ export const WeekdayFormat: {
 };
 
 // @public
-export type WeekdayFormat = typeof WeekdayFormat[keyof typeof WeekdayFormat];
+export type WeekdayFormat = ValuesOf<typeof WeekdayFormat>;
 
 // @public
 export type WeekdayText = {
@@ -2794,7 +2858,7 @@ export type WeekdayText = {
 };
 
 // @public
-export function whitespaceFilter(value: Node, index: number, array: Node[]): boolean;
+export const whitespaceFilter: ElementsFilter;
 
 // @public
 export const YearFormat: {
@@ -2803,23 +2867,21 @@ export const YearFormat: {
 };
 
 // @public
-export type YearFormat = typeof YearFormat[keyof typeof YearFormat];
+export type YearFormat = ValuesOf<typeof YearFormat>;
 
 // Warnings were encountered during analysis:
 //
-// dist/dts/calendar/calendar.d.ts:49:5 - (ae-incompatible-release-tags) The symbol "dataGridCell" is marked as @public, but its signature references "TemplateElementDependency" which is marked as @beta
-// dist/dts/calendar/calendar.d.ts:50:5 - (ae-incompatible-release-tags) The symbol "dataGridRow" is marked as @public, but its signature references "TemplateElementDependency" which is marked as @beta
-// dist/dts/calendar/calendar.d.ts:51:5 - (ae-incompatible-release-tags) The symbol "dataGrid" is marked as @public, but its signature references "TemplateElementDependency" which is marked as @beta
+// dist/dts/calendar/calendar.d.ts:51:5 - (ae-incompatible-release-tags) The symbol "dataGridCell" is marked as @public, but its signature references "TemplateElementDependency" which is marked as @beta
+// dist/dts/calendar/calendar.d.ts:52:5 - (ae-incompatible-release-tags) The symbol "dataGridRow" is marked as @public, but its signature references "TemplateElementDependency" which is marked as @beta
+// dist/dts/calendar/calendar.d.ts:53:5 - (ae-incompatible-release-tags) The symbol "dataGrid" is marked as @public, but its signature references "TemplateElementDependency" which is marked as @beta
 // dist/dts/data-grid/data-grid-row.template.d.ts:9:5 - (ae-incompatible-release-tags) The symbol "dataGridCell" is marked as @public, but its signature references "TemplateElementDependency" which is marked as @beta
 // dist/dts/data-grid/data-grid.template.d.ts:9:5 - (ae-incompatible-release-tags) The symbol "dataGridRow" is marked as @public, but its signature references "TemplateElementDependency" which is marked as @beta
-// dist/dts/menu-item/menu-item.d.ts:20:5 - (ae-incompatible-release-tags) The symbol "anchoredRegion" is marked as @public, but its signature references "TemplateElementDependency" which is marked as @beta
 // dist/dts/picker/picker.template.d.ts:9:5 - (ae-incompatible-release-tags) The symbol "anchoredRegion" is marked as @public, but its signature references "TemplateElementDependency" which is marked as @beta
 // dist/dts/picker/picker.template.d.ts:10:5 - (ae-incompatible-release-tags) The symbol "pickerMenu" is marked as @public, but its signature references "TemplateElementDependency" which is marked as @beta
 // dist/dts/picker/picker.template.d.ts:11:5 - (ae-incompatible-release-tags) The symbol "pickerMenuOption" is marked as @public, but its signature references "TemplateElementDependency" which is marked as @beta
 // dist/dts/picker/picker.template.d.ts:12:5 - (ae-incompatible-release-tags) The symbol "pickerList" is marked as @public, but its signature references "TemplateElementDependency" which is marked as @beta
 // dist/dts/picker/picker.template.d.ts:13:5 - (ae-incompatible-release-tags) The symbol "pickerListItem" is marked as @public, but its signature references "TemplateElementDependency" which is marked as @beta
 // dist/dts/picker/picker.template.d.ts:14:5 - (ae-incompatible-release-tags) The symbol "progressRing" is marked as @public, but its signature references "TemplateElementDependency" which is marked as @beta
-// dist/dts/tooltip/tooltip.template.d.ts:9:5 - (ae-incompatible-release-tags) The symbol "anchoredRegion" is marked as @public, but its signature references "TemplateElementDependency" which is marked as @beta
 
 // (No @packageDocumentation comment for this package)
 

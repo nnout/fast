@@ -1,11 +1,5 @@
-import {
-    attr,
-    FASTElement,
-    html,
-    HTMLView,
-    observable,
-    ViewTemplate,
-} from "@microsoft/fast-element";
+import type { HTMLView, ViewTemplate } from "@microsoft/fast-element";
+import { attr, FASTElement, html, observable } from "@microsoft/fast-element";
 import {
     eventFocusIn,
     eventFocusOut,
@@ -157,9 +151,8 @@ export class FASTDataGridCell extends FASTElement {
                         "function"
                 ) {
                     // move focus to the focus target
-                    const focusTarget: HTMLElement = this.columnDefinition.headerCellFocusTargetCallback(
-                        this
-                    );
+                    const focusTarget: HTMLElement =
+                        this.columnDefinition.headerCellFocusTargetCallback(this);
                     if (focusTarget !== null) {
                         focusTarget.focus();
                     }
@@ -173,9 +166,8 @@ export class FASTDataGridCell extends FASTElement {
                     typeof this.columnDefinition.cellFocusTargetCallback === "function"
                 ) {
                     // move focus to the focus target
-                    const focusTarget: HTMLElement = this.columnDefinition.cellFocusTargetCallback(
-                        this
-                    );
+                    const focusTarget: HTMLElement =
+                        this.columnDefinition.cellFocusTargetCallback(this);
                     if (focusTarget !== null) {
                         focusTarget.focus();
                     }
@@ -220,9 +212,8 @@ export class FASTDataGridCell extends FASTElement {
                             this.columnDefinition.headerCellFocusTargetCallback !==
                             undefined
                         ) {
-                            const focusTarget: HTMLElement = this.columnDefinition.headerCellFocusTargetCallback(
-                                this
-                            );
+                            const focusTarget: HTMLElement =
+                                this.columnDefinition.headerCellFocusTargetCallback(this);
                             if (focusTarget !== null) {
                                 focusTarget.focus();
                             }
@@ -232,9 +223,8 @@ export class FASTDataGridCell extends FASTElement {
 
                     default:
                         if (this.columnDefinition.cellFocusTargetCallback !== undefined) {
-                            const focusTarget: HTMLElement = this.columnDefinition.cellFocusTargetCallback(
-                                this
-                            );
+                            const focusTarget: HTMLElement =
+                                this.columnDefinition.cellFocusTargetCallback(this);
                             if (focusTarget !== null) {
                                 focusTarget.focus();
                             }
@@ -265,30 +255,18 @@ export class FASTDataGridCell extends FASTElement {
 
         switch (this.cellType) {
             case DataGridCellTypes.columnHeader:
-                if (this.columnDefinition.headerCellTemplate !== undefined) {
-                    this.customCellView = this.columnDefinition.headerCellTemplate.render(
-                        this,
-                        this
-                    );
-                } else {
-                    this.customCellView = defaultHeaderCellContentsTemplate.render(
-                        this,
-                        this
-                    );
-                }
+                this.customCellView = html`
+                    ${this.columnDefinition.headerCellTemplate ??
+                    defaultHeaderCellContentsTemplate}
+                `.render(this, this);
                 break;
 
             case undefined:
             case DataGridCellTypes.rowHeader:
             case DataGridCellTypes.default:
-                if (this.columnDefinition.cellTemplate !== undefined) {
-                    this.customCellView = this.columnDefinition.cellTemplate.render(
-                        this,
-                        this
-                    );
-                } else {
-                    this.customCellView = defaultCellContentsTemplate.render(this, this);
-                }
+                this.customCellView = html`
+                    ${this.columnDefinition.cellTemplate ?? defaultCellContentsTemplate}
+                `.render(this, this);
                 break;
         }
     }

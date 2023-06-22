@@ -9,13 +9,13 @@ import {
     ReadonlyAppliedDesignTokens,
     ReadonlyAppliedRecipes,
     RecipeEvaluation,
-} from "../model";
+} from "../model.js";
 import {
     DesignTokenDefinition,
     DesignTokenRegistry,
     DesignTokenType,
-} from "./design-token-registry";
-import { registerRecipes, registerTokens } from "./recipes";
+} from "./design-token-registry.js";
+import { registerRecipes, registerTokens } from "./recipes.js";
 
 /**
  * Represents a Node on the UI side.
@@ -285,12 +285,9 @@ export class UIController {
         });
     }
 
-    private evaluateRecipe<T>(
-        recipe: DesignTokenDefinition<T>,
-        node: PluginUINodeData
-    ): T {
+    private evaluateRecipe(recipe: DesignTokenDefinition, node: PluginUINodeData): any {
         // console.log("    evaluateRecipe", recipe);
-        let value: T = this.getDesignTokenValue<T>(node, recipe.token);
+        let value: any = this.getDesignTokenValue(node, recipe.token);
         if (typeof (value as any).toColorString === "function") {
             value = (value as any).toColorString();
         }
@@ -360,7 +357,7 @@ export class UIController {
 
     private setDesignTokenForElement<T>(
         nodeElement: HTMLElement,
-        token: DesignToken<T>,
+        token: DesignToken<any>,
         value: T | null
     ) {
         try {
@@ -409,7 +406,11 @@ export class UIController {
         return (value: AppliedDesignToken, key: string): void => {
             const def = this._designTokenRegistry.get(key);
             if (def) {
-                this.setDesignTokenForElement(nodeElement, def.token, value.value);
+                this.setDesignTokenForElement(
+                    nodeElement,
+                    def.token,
+                    value.value as string
+                );
             }
         };
     }
@@ -461,21 +462,21 @@ export class UIController {
         }
     }
 
-    public getDesignTokenDefinitions(): DesignTokenDefinition<any>[] {
+    public getDesignTokenDefinitions(): DesignTokenDefinition[] {
         return this._designTokenRegistry.find(DesignTokenType.designToken);
     }
 
-    public getDesignTokenDefinition<T>(id: string): DesignTokenDefinition<T> | null {
+    public getDesignTokenDefinition(id: string): DesignTokenDefinition | null {
         return this._designTokenRegistry.get(id);
     }
 
-    public getDefaultDesignTokenValue<T>(token: DesignToken<T>): string {
+    public getDefaultDesignTokenValue(token: DesignToken<any>): string {
         const val = this.valueToString(token.getValueFor(this._rootElement));
         // console.log("getDefaultDesignTokenValue", "token", token, "value", val);
         return val;
     }
 
-    public getDesignTokenValue<T>(node: PluginUINodeData, token: DesignToken<T>): T {
+    public getDesignTokenValue(node: PluginUINodeData, token: DesignToken<any>): any {
         // Evaluate the token based on the tokens provided to the element.
         const element = this.getElementForNode(node);
         const val = token.getValueFor(element);
@@ -483,10 +484,10 @@ export class UIController {
         return val;
     }
 
-    private setDesignTokenForNode<T>(
+    private setDesignTokenForNode(
         node: PluginUINodeData,
-        definition: DesignTokenDefinition<T>,
-        value: T | null
+        definition: DesignTokenDefinition,
+        value: any
     ): void {
         if (value) {
             const designToken = new AppliedDesignToken();
@@ -501,7 +502,7 @@ export class UIController {
         this.setDesignTokenForElement(element, definition.token, value);
     }
 
-    public assignDesignToken<T>(definition: DesignTokenDefinition<T>, value: T): void {
+    public assignDesignToken<T>(definition: DesignTokenDefinition, value: T): void {
         const nodes = this._selectedNodes.filter(node =>
             node.supports.includes(DesignTokenType.designToken)
         );

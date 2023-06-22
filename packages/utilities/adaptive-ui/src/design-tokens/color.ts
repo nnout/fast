@@ -1,6 +1,10 @@
 import { parseColorHexRGB } from "@microsoft/fast-colors";
 import { DesignTokenResolver } from "@microsoft/fast-foundation";
-import { blackOrWhiteByContrast } from "../color/index.js";
+import {
+    blackOrWhiteByContrast,
+    interactiveSwatchSetAsOverlay,
+    swatchAsOverlay,
+} from "../color/index.js";
 import {
     ColorRecipe,
     InteractiveColorRecipe,
@@ -22,12 +26,12 @@ import { accentPalette, neutralPalette } from "./palette.js";
  */
 export const ContrastTarget = Object.freeze({
     /**
-     * Minimum contrast for normal (<= 14pt) text (AA rating).
+     * Minimum contrast for normal (&lt;= 14pt) text (AA rating).
      */
     NormalText: 4.5,
 
     /**
-     * Minimum contrast for large (> 14pt) text (AA rating).
+     * Minimum contrast for large (&gt; 14pt) text (AA rating).
      */
     LargeText: 3,
 } as const);
@@ -36,6 +40,10 @@ export const ContrastTarget = Object.freeze({
 export const fillColor = create<Swatch>("fill-color").withDefault(
     SwatchRGB.from(parseColorHexRGB("#FFFFFF")!)
 );
+
+/** @public */
+export const neutralAsOverlay =
+    createNonCss<boolean>("neutral-as-overlay").withDefault(false);
 
 // Accent Fill
 
@@ -262,14 +270,18 @@ export const neutralForegroundRecipe = createNonCss<InteractiveColorRecipe>(
     "neutral-foreground-recipe"
 ).withDefault({
     evaluate: (resolve: DesignTokenResolver, reference?: Swatch): InteractiveSwatchSet =>
-        contrastAndDeltaSwatchSet(
-            resolve(neutralPalette),
+        interactiveSwatchSetAsOverlay(
+            contrastAndDeltaSwatchSet(
+                resolve(neutralPalette),
+                reference || resolve(fillColor),
+                resolve(neutralForegroundMinContrast),
+                resolve(neutralForegroundRestDelta),
+                resolve(neutralForegroundHoverDelta),
+                resolve(neutralForegroundActiveDelta),
+                resolve(neutralForegroundFocusDelta)
+            ),
             reference || resolve(fillColor),
-            resolve(neutralForegroundMinContrast),
-            resolve(neutralForegroundRestDelta),
-            resolve(neutralForegroundHoverDelta),
-            resolve(neutralForegroundActiveDelta),
-            resolve(neutralForegroundFocusDelta)
+            resolve(neutralAsOverlay)
         ),
 });
 
@@ -312,10 +324,14 @@ export const neutralForegroundHintRecipe = createNonCss<ColorRecipe>(
     "neutral-foreground-hint-recipe"
 ).withDefault({
     evaluate: (resolve: DesignTokenResolver, reference?: Swatch): Swatch =>
-        contrastSwatch(
-            resolve(neutralPalette),
+        swatchAsOverlay(
+            contrastSwatch(
+                resolve(neutralPalette),
+                reference || resolve(fillColor),
+                ContrastTarget.NormalText
+            ),
             reference || resolve(fillColor),
-            ContrastTarget.NormalText
+            resolve(neutralAsOverlay)
         ),
 });
 
@@ -353,13 +369,17 @@ export const neutralFillRecipe = createNonCss<InteractiveColorRecipe>(
     "neutral-fill-recipe"
 ).withDefault({
     evaluate: (resolve: DesignTokenResolver, reference?: Swatch): InteractiveSwatchSet =>
-        deltaSwatchSet(
-            resolve(neutralPalette),
+        interactiveSwatchSetAsOverlay(
+            deltaSwatchSet(
+                resolve(neutralPalette),
+                reference || resolve(fillColor),
+                resolve(neutralFillRestDelta),
+                resolve(neutralFillHoverDelta),
+                resolve(neutralFillActiveDelta),
+                resolve(neutralFillFocusDelta)
+            ),
             reference || resolve(fillColor),
-            resolve(neutralFillRestDelta),
-            resolve(neutralFillHoverDelta),
-            resolve(neutralFillActiveDelta),
-            resolve(neutralFillFocusDelta)
+            resolve(neutralAsOverlay)
         ),
 });
 
@@ -398,7 +418,7 @@ export const neutralFillInputHoverDelta = createNonCss<number>(
 /** @public */
 export const neutralFillInputActiveDelta = createNonCss<number>(
     "neutral-fill-input-active-delta"
-).withDefault(0);
+).withDefault(-2);
 
 /** @public */
 export const neutralFillInputFocusDelta = createNonCss<number>(
@@ -410,13 +430,17 @@ export const neutralFillInputRecipe = createNonCss<InteractiveColorRecipe>(
     "neutral-fill-input-recipe"
 ).withDefault({
     evaluate: (resolve: DesignTokenResolver, reference?: Swatch): InteractiveSwatchSet =>
-        deltaSwatchSet(
-            resolve(neutralPalette),
+        interactiveSwatchSetAsOverlay(
+            deltaSwatchSet(
+                resolve(neutralPalette),
+                reference || resolve(fillColor),
+                resolve(neutralFillInputRestDelta),
+                resolve(neutralFillInputHoverDelta),
+                resolve(neutralFillInputActiveDelta),
+                resolve(neutralFillInputFocusDelta)
+            ),
             reference || resolve(fillColor),
-            resolve(neutralFillInputRestDelta),
-            resolve(neutralFillInputHoverDelta),
-            resolve(neutralFillInputActiveDelta),
-            resolve(neutralFillInputFocusDelta)
+            resolve(neutralAsOverlay)
         ),
 });
 
@@ -477,13 +501,17 @@ export const neutralFillSecondaryRecipe = createNonCss<InteractiveColorRecipe>(
     "neutral-fill-secondary-recipe"
 ).withDefault({
     evaluate: (resolve: DesignTokenResolver, reference?: Swatch): InteractiveSwatchSet =>
-        deltaSwatchSet(
-            resolve(neutralPalette),
+        interactiveSwatchSetAsOverlay(
+            deltaSwatchSet(
+                resolve(neutralPalette),
+                reference || resolve(fillColor),
+                resolve(neutralFillSecondaryRestDelta),
+                resolve(neutralFillSecondaryHoverDelta),
+                resolve(neutralFillSecondaryActiveDelta),
+                resolve(neutralFillSecondaryFocusDelta)
+            ),
             reference || resolve(fillColor),
-            resolve(neutralFillSecondaryRestDelta),
-            resolve(neutralFillSecondaryHoverDelta),
-            resolve(neutralFillSecondaryActiveDelta),
-            resolve(neutralFillSecondaryFocusDelta)
+            resolve(neutralAsOverlay)
         ),
 });
 
@@ -546,13 +574,17 @@ export const neutralFillStealthRecipe = createNonCss<InteractiveColorRecipe>(
     "neutral-fill-stealth-recipe"
 ).withDefault({
     evaluate: (resolve: DesignTokenResolver, reference?: Swatch): InteractiveSwatchSet =>
-        deltaSwatchSet(
-            resolve(neutralPalette),
+        interactiveSwatchSetAsOverlay(
+            deltaSwatchSet(
+                resolve(neutralPalette),
+                reference || resolve(fillColor),
+                resolve(neutralFillStealthRestDelta),
+                resolve(neutralFillStealthHoverDelta),
+                resolve(neutralFillStealthActiveDelta),
+                resolve(neutralFillStealthFocusDelta)
+            ),
             reference || resolve(fillColor),
-            resolve(neutralFillStealthRestDelta),
-            resolve(neutralFillStealthHoverDelta),
-            resolve(neutralFillStealthActiveDelta),
-            resolve(neutralFillStealthFocusDelta)
+            resolve(neutralAsOverlay)
         ),
 });
 
@@ -620,14 +652,18 @@ export const neutralFillStrongRecipe = createNonCss<InteractiveColorRecipe>(
     "neutral-fill-strong-recipe"
 ).withDefault({
     evaluate: (resolve: DesignTokenResolver, reference?: Swatch): InteractiveSwatchSet =>
-        contrastAndDeltaSwatchSet(
-            resolve(neutralPalette),
+        interactiveSwatchSetAsOverlay(
+            contrastAndDeltaSwatchSet(
+                resolve(neutralPalette),
+                reference || resolve(fillColor),
+                resolve(neutralFillStrongMinContrast),
+                resolve(neutralFillStrongRestDelta),
+                resolve(neutralFillStrongHoverDelta),
+                resolve(neutralFillStrongActiveDelta),
+                resolve(neutralFillStrongFocusDelta)
+            ),
             reference || resolve(fillColor),
-            resolve(neutralFillStrongMinContrast),
-            resolve(neutralFillStrongRestDelta),
-            resolve(neutralFillStrongHoverDelta),
-            resolve(neutralFillStrongActiveDelta),
-            resolve(neutralFillStrongFocusDelta)
+            resolve(neutralAsOverlay)
         ),
 });
 
@@ -689,19 +725,19 @@ export const neutralStrokeFocusDelta = createNonCss<number>(
 export const neutralStrokeRecipe = createNonCss<InteractiveColorRecipe>(
     "neutral-stroke-recipe"
 ).withDefault({
-    evaluate: (
-        resolve: DesignTokenResolver,
-        reference?: Swatch
-    ): InteractiveSwatchSet => {
-        return deltaSwatchSet(
-            resolve(neutralPalette),
+    evaluate: (resolve: DesignTokenResolver, reference?: Swatch): InteractiveSwatchSet =>
+        interactiveSwatchSetAsOverlay(
+            deltaSwatchSet(
+                resolve(neutralPalette),
+                reference || resolve(fillColor),
+                resolve(neutralStrokeRestDelta),
+                resolve(neutralStrokeHoverDelta),
+                resolve(neutralStrokeActiveDelta),
+                resolve(neutralStrokeFocusDelta)
+            ),
             reference || resolve(fillColor),
-            resolve(neutralStrokeRestDelta),
-            resolve(neutralStrokeHoverDelta),
-            resolve(neutralStrokeActiveDelta),
-            resolve(neutralStrokeFocusDelta)
-        );
-    },
+            resolve(neutralAsOverlay)
+        ),
 });
 
 /** @public */
@@ -737,10 +773,14 @@ export const neutralStrokeDividerRecipe = createNonCss<ColorRecipe>(
     "neutral-stroke-divider-recipe"
 ).withDefault({
     evaluate: (resolve: DesignTokenResolver, reference?: Swatch): Swatch =>
-        deltaSwatch(
-            resolve(neutralPalette),
+        swatchAsOverlay(
+            deltaSwatch(
+                resolve(neutralPalette),
+                reference || resolve(fillColor),
+                resolve(neutralStrokeDividerRestDelta)
+            ),
             reference || resolve(fillColor),
-            resolve(neutralStrokeDividerRestDelta)
+            resolve(neutralAsOverlay)
         ),
 });
 
@@ -775,19 +815,19 @@ export const neutralStrokeInputFocusDelta = createNonCss<number>(
 export const neutralStrokeInputRecipe = createNonCss<InteractiveColorRecipe>(
     "neutral-stroke-input-recipe"
 ).withDefault({
-    evaluate: (
-        resolve: DesignTokenResolver,
-        reference?: Swatch
-    ): InteractiveSwatchSet => {
-        return deltaSwatchSet(
-            resolve(neutralPalette),
+    evaluate: (resolve: DesignTokenResolver, reference?: Swatch): InteractiveSwatchSet =>
+        interactiveSwatchSetAsOverlay(
+            deltaSwatchSet(
+                resolve(neutralPalette),
+                reference || resolve(fillColor),
+                resolve(neutralStrokeInputRestDelta),
+                resolve(neutralStrokeInputHoverDelta),
+                resolve(neutralStrokeInputActiveDelta),
+                resolve(neutralStrokeInputFocusDelta)
+            ),
             reference || resolve(fillColor),
-            resolve(neutralStrokeInputRestDelta),
-            resolve(neutralStrokeInputHoverDelta),
-            resolve(neutralStrokeInputActiveDelta),
-            resolve(neutralStrokeInputFocusDelta)
-        );
-    },
+            resolve(neutralAsOverlay)
+        ),
 });
 
 /** @public */
@@ -854,14 +894,18 @@ export const neutralStrokeStrongRecipe = createNonCss<InteractiveColorRecipe>(
     "neutral-stroke-strong-recipe"
 ).withDefault({
     evaluate: (resolve: DesignTokenResolver, reference?: Swatch): InteractiveSwatchSet =>
-        contrastAndDeltaSwatchSet(
-            resolve(neutralPalette),
+        interactiveSwatchSetAsOverlay(
+            contrastAndDeltaSwatchSet(
+                resolve(neutralPalette),
+                reference || resolve(fillColor),
+                resolve(neutralStrokeStrongMinContrast),
+                resolve(neutralStrokeStrongRestDelta),
+                resolve(neutralStrokeStrongHoverDelta),
+                resolve(neutralStrokeStrongActiveDelta),
+                resolve(neutralStrokeStrongFocusDelta)
+            ),
             reference || resolve(fillColor),
-            resolve(neutralStrokeStrongMinContrast),
-            resolve(neutralStrokeStrongRestDelta),
-            resolve(neutralStrokeStrongHoverDelta),
-            resolve(neutralStrokeStrongActiveDelta),
-            resolve(neutralStrokeStrongFocusDelta)
+            resolve(neutralAsOverlay)
         ),
 });
 
@@ -908,10 +952,8 @@ export const focusStrokeOuterRecipe = createNonCss<ColorRecipe>(
 });
 
 /** @public */
-export const focusStrokeOuter = create<Swatch>(
-    "focus-stroke-outer"
-).withDefault((resolve: DesignTokenResolver) =>
-    resolve(focusStrokeOuterRecipe).evaluate(resolve)
+export const focusStrokeOuter = create<Swatch>("focus-stroke-outer").withDefault(
+    (resolve: DesignTokenResolver) => resolve(focusStrokeOuterRecipe).evaluate(resolve)
 );
 
 // Focus Stroke Inner
@@ -929,8 +971,6 @@ export const focusStrokeInnerRecipe = createNonCss<ColorRecipe>(
 });
 
 /** @public */
-export const focusStrokeInner = create<Swatch>(
-    "focus-stroke-inner"
-).withDefault((resolve: DesignTokenResolver) =>
-    resolve(focusStrokeInnerRecipe).evaluate(resolve)
+export const focusStrokeInner = create<Swatch>("focus-stroke-inner").withDefault(
+    (resolve: DesignTokenResolver) => resolve(focusStrokeInnerRecipe).evaluate(resolve)
 );

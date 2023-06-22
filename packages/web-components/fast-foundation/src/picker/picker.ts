@@ -1,15 +1,15 @@
 import {
     attr,
-    bind,
     html,
     HTMLView,
     observable,
+    oneWay,
     ref,
-    RepeatBehavior,
     RepeatDirective,
     Updates,
     ViewTemplate,
 } from "@microsoft/fast-element";
+import { ViewBehaviorOrchestrator } from "@microsoft/fast-element/utilities";
 import {
     keyArrowDown,
     keyArrowLeft,
@@ -311,10 +311,11 @@ export class FASTPicker extends FormAssociatedPicker {
     public filteredOptionsList: string[] = [];
     protected filteredOptionsListChanged(): void {
         if (this.$fastController.isConnected) {
-            this.showNoOptions =
-                this.filteredOptionsList.length === 0 &&
-                this.menuElement.querySelectorAll('[role="listitem"]').length === 0;
-            this.setFocusedOption(this.showNoOptions ? -1 : 0);
+            Updates.enqueue(() => {
+                this.showNoOptions =
+                    this.menuElement.querySelectorAll('[role="listitem"]').length === 0;
+                this.setFocusedOption(this.showNoOptions ? -1 : 0);
+            });
         }
     }
 
@@ -438,11 +439,10 @@ export class FASTPicker extends FormAssociatedPicker {
      */
     @observable
     public selectedItems: string[] = [];
-    private itemsRepeatBehavior: RepeatBehavior | null;
 
-    private optionsRepeatBehavior: RepeatBehavior | null;
     private optionsPlaceholder: Node;
     private inputElementView: HTMLView | null = null;
+    private behaviorOrchestrator: ViewBehaviorOrchestrator | null = null;
 
     /**
      * @internal
@@ -450,10 +450,14 @@ export class FASTPicker extends FormAssociatedPicker {
     public connectedCallback(): void {
         super.connectedCallback();
 
-        this.listElement = document.createElement(this.selectedListTag) as FASTPickerList;
-        this.appendChild(this.listElement);
-        this.itemsPlaceholderElement = document.createComment("");
-        this.listElement.append(this.itemsPlaceholderElement);
+        if (!this.listElement) {
+            this.listElement = document.createElement(
+                this.selectedListTag
+            ) as FASTPickerList;
+            this.appendChild(this.listElement);
+            this.itemsPlaceholderElement = document.createComment("");
+            this.listElement.appendChild(this.itemsPlaceholderElement);
+        }
 
         this.inputElementView = pickerInputTemplate.render(this, this.listElement);
 
@@ -462,21 +466,23 @@ export class FASTPicker extends FormAssociatedPicker {
             return element.tagName === match;
         }) as FASTPickerMenu;
 
-        if (this.menuElement === undefined) {
+        if (!this.menuElement) {
             this.menuElement = document.createElement(this.menuTag) as FASTPickerMenu;
             this.appendChild(this.menuElement);
+
+            if (this.menuElement.id === "") {
+                this.menuElement.id = uniqueId("listbox-");
+            }
+
+            this.menuId = this.menuElement.id;
         }
 
-        if (this.menuElement.id === "") {
-            this.menuElement.id = uniqueId("listbox-");
+        if (!this.optionsPlaceholder) {
+            this.optionsPlaceholder = document.createComment("");
+            this.menuElement.appendChild(this.optionsPlaceholder);
         }
-
-        this.menuId = this.menuElement.id;
-        this.optionsPlaceholder = document.createComment("");
-        this.menuElement.append(this.optionsPlaceholder);
 
         this.updateMenuConfig();
-
         Updates.enqueue(() => this.initialize());
     }
 
@@ -485,6 +491,7 @@ export class FASTPicker extends FormAssociatedPicker {
         this.toggleFlyout(false);
         this.inputElement.removeEventListener("input", this.handleTextInput);
         this.inputElement.removeEventListener("click", this.handleInputClick);
+
         if (this.inputElementView !== null) {
             this.inputElementView.dispose();
             this.inputElementView = null;
@@ -506,37 +513,36 @@ export class FASTPicker extends FormAssociatedPicker {
         this.updateListItemTemplate();
         this.updateOptionTemplate();
 
-        const itemsRepeatDirective = new RepeatDirective(
-            bind(x => x.selectedItems, false),
-            bind(x => x.activeListItemTemplate, false),
-            { positioning: true }
-        );
-        this.itemsRepeatBehavior = itemsRepeatDirective.createBehavior({
-            [itemsRepeatDirective.nodeId]: this.itemsPlaceholderElement,
-        });
+        if (this.behaviorOrchestrator === null) {
+            this.behaviorOrchestrator = ViewBehaviorOrchestrator.create(this);
+            this.$fastController.addBehavior(this.behaviorOrchestrator);
+
+            this.behaviorOrchestrator.addBehaviorFactory(
+                new RepeatDirective(
+                    oneWay(x => x.selectedItems),
+                    oneWay(x => x.activeListItemTemplate),
+                    { positioning: true }
+                ),
+                this.itemsPlaceholderElement
+            );
+
+            this.behaviorOrchestrator.addBehaviorFactory(
+                new RepeatDirective(
+                    oneWay(x => x.filteredOptionsList),
+                    oneWay(x => x.activeMenuOptionTemplate),
+                    { positioning: true }
+                ),
+                this.optionsPlaceholder
+            );
+        }
 
         this.inputElement.addEventListener("input", this.handleTextInput);
         this.inputElement.addEventListener("click", this.handleInputClick);
-        /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
-        this.$fastController.addBehaviors([this.itemsRepeatBehavior!]);
-
         this.menuElement.suggestionsAvailableText = this.suggestionsAvailableText;
         this.menuElement.addEventListener(
             "optionsupdated",
             this.handleMenuOptionsUpdated
         );
-
-        const optionsRepeatDirective = new RepeatDirective(
-            bind(x => x.filteredOptionsList, false),
-            bind(x => x.activeMenuOptionTemplate, false),
-            { positioning: true }
-        );
-        this.optionsRepeatBehavior = optionsRepeatDirective.createBehavior({
-            [optionsRepeatDirective.nodeId]: this.optionsPlaceholder,
-        });
-
-        /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
-        this.$fastController.addBehaviors([this.optionsRepeatBehavior!]);
 
         this.handleSelectionChange();
     }
@@ -549,7 +555,7 @@ export class FASTPicker extends FormAssociatedPicker {
             return;
         }
 
-        if (open && document.activeElement === this.inputElement) {
+        if (open && this.getRootActiveElement() === this.inputElement) {
             this.flyoutOpen = open;
             Updates.enqueue(() => {
                 if (this.menuElement !== undefined) {
@@ -598,6 +604,7 @@ export class FASTPicker extends FormAssociatedPicker {
         if (e.defaultPrevented) {
             return false;
         }
+        const activeElement = this.getRootActiveElement();
         switch (e.key) {
             // TODO: what should "home" and "end" keys do, exactly?
             //
@@ -667,7 +674,7 @@ export class FASTPicker extends FormAssociatedPicker {
             }
 
             case keyArrowRight: {
-                if (document.activeElement !== this.inputElement) {
+                if (activeElement !== this.inputElement) {
                     this.incrementFocusedItem(1);
                     return false;
                 }
@@ -686,11 +693,11 @@ export class FASTPicker extends FormAssociatedPicker {
 
             case keyDelete:
             case keyBackspace: {
-                if (document.activeElement === null) {
+                if (activeElement === null) {
                     return true;
                 }
 
-                if (document.activeElement === this.inputElement) {
+                if (activeElement === this.inputElement) {
                     if (this.inputElement.selectionStart === 0) {
                         this.selection = this.selectedItems
                             .slice(0, this.selectedItems.length - 1)
@@ -703,9 +710,8 @@ export class FASTPicker extends FormAssociatedPicker {
                 }
 
                 const selectedItems: Element[] = Array.from(this.listElement.children);
-                const currentFocusedItemIndex: number = selectedItems.indexOf(
-                    document.activeElement
-                );
+                const currentFocusedItemIndex: number =
+                    selectedItems.indexOf(activeElement);
 
                 if (currentFocusedItemIndex > -1) {
                     // delete currently focused item
@@ -713,9 +719,11 @@ export class FASTPicker extends FormAssociatedPicker {
                         .splice(currentFocusedItemIndex, 1)
                         .toString();
                     Updates.enqueue(() => {
-                        (selectedItems[
-                            Math.min(selectedItems.length, currentFocusedItemIndex)
-                        ] as HTMLElement).focus();
+                        (
+                            selectedItems[
+                                Math.min(selectedItems.length, currentFocusedItemIndex)
+                            ] as HTMLElement
+                        ).focus();
                     });
                     return false;
                 }
@@ -801,18 +809,28 @@ export class FASTPicker extends FormAssociatedPicker {
             this.maxSelected !== undefined &&
             this.selectedItems.length >= this.maxSelected
         ) {
-            if (document.activeElement === this.inputElement) {
+            if (this.getRootActiveElement() === this.inputElement) {
                 const selectedItemInstances: Element[] = Array.from(
                     this.listElement.querySelectorAll("[role='listitem']")
                 );
-                (selectedItemInstances[
-                    selectedItemInstances.length - 1
-                ] as HTMLElement).focus();
+                (
+                    selectedItemInstances[selectedItemInstances.length - 1] as HTMLElement
+                ).focus();
             }
             this.inputElement.hidden = true;
         } else {
             this.inputElement.hidden = false;
         }
+    }
+
+    private getRootActiveElement(): Element | null {
+        const rootNode = this.getRootNode();
+
+        if (rootNode instanceof ShadowRoot) {
+            return rootNode.activeElement;
+        }
+
+        return document.activeElement;
     }
 
     /**
@@ -831,7 +849,10 @@ export class FASTPicker extends FormAssociatedPicker {
                 const newSelection: string[] = this.selectedItems.slice();
                 newSelection.splice(itemIndex, 1);
                 this.selection = newSelection.toString();
-                Updates.enqueue(() => this.incrementFocusedItem(0));
+                Updates.enqueue(() => {
+                    this.incrementFocusedItem(0);
+                    this.toggleFlyout(true);
+                });
             }
             return false;
         }
@@ -877,10 +898,10 @@ export class FASTPicker extends FormAssociatedPicker {
             this.listElement.querySelectorAll("[role='listitem']")
         );
 
-        if (document.activeElement !== null) {
-            let currentFocusedItemIndex: number = selectedItemsAsElements.indexOf(
-                document.activeElement
-            );
+        const activeElement = this.getRootActiveElement();
+        if (activeElement !== null) {
+            let currentFocusedItemIndex: number =
+                selectedItemsAsElements.indexOf(activeElement);
             if (currentFocusedItemIndex === -1) {
                 // use the input element
                 currentFocusedItemIndex = selectedItemsAsElements.length;
@@ -895,9 +916,9 @@ export class FASTPicker extends FormAssociatedPicker {
                     this.maxSelected !== undefined &&
                     this.selectedItems.length >= this.maxSelected
                 ) {
-                    (selectedItemsAsElements[
-                        newFocusedItemIndex - 1
-                    ] as HTMLElement).focus();
+                    (
+                        selectedItemsAsElements[newFocusedItemIndex - 1] as HTMLElement
+                    ).focus();
                 } else {
                     this.inputElement.focus();
                 }
@@ -955,7 +976,7 @@ export class FASTPicker extends FormAssociatedPicker {
 
         focusedOption.setAttribute("aria-selected", "true");
 
-        this.menuElement.scrollTo(0, focusedOption.offsetTop);
+        focusedOption.scrollIntoView(true);
     }
 
     /**
@@ -985,8 +1006,10 @@ export class FASTPicker extends FormAssociatedPicker {
             );
         }
         if (this.filterQuery && this.query !== "" && this.query !== undefined) {
+            // compare case-insensitive
+            const filterQuery = this.query.toLowerCase();
             this.filteredOptionsList = this.filteredOptionsList.filter(
-                el => el.indexOf(this.query) !== -1
+                el => el.toLowerCase().indexOf(filterQuery) !== -1
             );
         }
     }

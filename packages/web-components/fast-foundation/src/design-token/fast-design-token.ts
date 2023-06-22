@@ -1,26 +1,30 @@
 import {
-    Behavior,
     CSSDirective,
+    HostController,
+    htmlDirective,
+    HTMLDirective,
+    Subscriber,
+} from "@microsoft/fast-element";
+import {
     cssDirective,
     FASTElement,
+    HostBehavior,
     Observable,
-    Subscriber,
     SubscriberSet,
 } from "@microsoft/fast-element";
 import { composedContains, composedParent } from "@microsoft/fast-element/utilities";
+import type {
+    DesignTokenChangeRecord as CoreDesignTokenChangeRecord,
+    DerivedDesignTokenValue,
+    DesignTokenResolver,
+    DesignTokenValue,
+} from "./core/design-token-node.js";
+import { DesignTokenMutationType, DesignTokenNode } from "./core/design-token-node.js";
 import {
     PropertyTarget,
     PropertyTargetManager,
     RootStyleSheetTarget,
 } from "./custom-property-manager.js";
-import {
-    DesignTokenChangeRecord as CoreDesignTokenChangeRecord,
-    DerivedDesignTokenValue,
-    DesignTokenMutationType,
-    DesignTokenNode,
-    DesignTokenResolver,
-    DesignTokenValue,
-} from "./core/design-token-node.js";
 
 /**
  * @public
@@ -256,7 +260,11 @@ export class DesignToken<T> {
  * @public
  */
 @cssDirective()
-export class CSSDesignToken<T> extends DesignToken<T> implements CSSDirective {
+@htmlDirective()
+export class CSSDesignToken<T>
+    extends DesignToken<T>
+    implements CSSDirective, HTMLDirective
+{
     /**
      * The CSS Custom property name of the token.
      */
@@ -269,6 +277,14 @@ export class CSSDesignToken<T> extends DesignToken<T> implements CSSDirective {
     public createCSS(): string {
         return this.cssVar;
     }
+
+    /**
+     * Creates HTML to be used within a template.
+     */
+    public createHTML(): string {
+        return this.cssVar;
+    }
+
     private cssReflector: Subscriber = {
         handleChange: <T>(
             source: DesignToken<T>,
@@ -305,7 +321,7 @@ export class CSSDesignToken<T> extends DesignToken<T> implements CSSDirective {
     }
 }
 
-export interface DesignTokenResolutionStrategy {
+export interface DesignTokenResolutionStrategy extends HostBehavior<FASTElement> {
     /**
      * Determines if a 'child' element is contained by a 'parent'.
      * @param child - The child element
@@ -318,16 +334,6 @@ export interface DesignTokenResolutionStrategy {
      * @param element - The element to find the parent of
      */
     parent(element: FASTElement): FASTElement | null;
-
-    /**
-     * Binds the strategy to the element
-     */
-    bind(element: FASTElement): void;
-
-    /**
-     * Un-binds the strategy to the element
-     */
-    unbind(element: FASTElement): void;
 }
 
 const defaultDesignTokenResolutionStrategy: DesignTokenResolutionStrategy = {
@@ -345,11 +351,9 @@ const defaultDesignTokenResolutionStrategy: DesignTokenResolutionStrategy = {
 
         return null;
     },
-    bind() {},
-    unbind() {},
 };
 
-class FASTDesignTokenNode extends DesignTokenNode implements Behavior {
+class FASTDesignTokenNode extends DesignTokenNode implements HostBehavior {
     private static _strategy: DesignTokenResolutionStrategy;
     private static get strategy() {
         if (this._strategy === undefined) {
@@ -362,8 +366,8 @@ class FASTDesignTokenNode extends DesignTokenNode implements Behavior {
     public static rootStyleSheetTarget = new RootStyleSheetTarget();
     private static cache = new WeakMap<FASTElement, FASTDesignTokenNode>();
 
-    public bind(target: FASTElement) {
-        let parent = FASTDesignTokenNode.findParent(target);
+    public connectedCallback(controller: HostController) {
+        let parent = FASTDesignTokenNode.findParent(controller.source);
 
         if (parent === null) {
             parent = FASTDesignTokenNode.defaultNode;
@@ -374,7 +378,7 @@ class FASTDesignTokenNode extends DesignTokenNode implements Behavior {
             for (const child of parent.children) {
                 if (
                     child instanceof FASTDesignTokenNode &&
-                    FASTDesignTokenNode.strategy.contains(target, child.target)
+                    FASTDesignTokenNode.strategy.contains(controller.source, child.target)
                 ) {
                     reparent.push(child);
                 }
@@ -388,7 +392,7 @@ class FASTDesignTokenNode extends DesignTokenNode implements Behavior {
         }
     }
 
-    public unbind(): void {
+    public disconnectedCallback(controller: HostController): void {
         FASTDesignTokenNode.cache.delete(this.target);
         this.dispose();
     }
@@ -402,7 +406,8 @@ class FASTDesignTokenNode extends DesignTokenNode implements Behavior {
 
         found = new FASTDesignTokenNode(target);
         FASTDesignTokenNode.cache.set(target, found);
-        target.$fastController.addBehaviors([FASTDesignTokenNode.strategy, found]);
+        target.$fastController.addBehavior(FASTDesignTokenNode.strategy);
+        target.$fastController.addBehavior(found);
 
         return found;
     }

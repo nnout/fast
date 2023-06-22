@@ -1,9 +1,5 @@
-import {
-    Disposable,
-    ExpressionNotifier,
-    Observable,
-    Subscriber,
-} from "@microsoft/fast-element";
+import { Observable } from "@microsoft/fast-element";
+import type { Disposable, ExpressionNotifier, Subscriber } from "@microsoft/fast-element";
 import type { DesignToken } from "./design-token.js";
 
 /**
@@ -244,11 +240,12 @@ export class DesignTokenNode {
      * Emit all queued notifications
      */
     private static notify() {
-        for (const record of this._notifications) {
+        const notifications = this._notifications;
+        this._notifications = [];
+
+        for (const record of notifications) {
             record.notify();
         }
-
-        this._notifications = [];
     }
 
     private static queueNotification(...records: DesignTokenChangeRecordImpl<any>[]) {
@@ -312,8 +309,13 @@ export class DesignTokenNode {
      * Appends a child to the node, notifying for any tokens set for the node's context.
      */
     public appendChild(child: DesignTokenNode) {
+        let prevContext: DesignToken<any>[] | null = null;
+
+        // If this node is already attached, get it's context so change record
+        // types can be determined
         if (child.parent !== null) {
-            child.parent.removeChild(child);
+            prevContext = DesignTokenNode.composeAssignedTokensForNode(child.parent);
+            child.parent._children.delete(child);
         }
 
         const context = DesignTokenNode.composeAssignedTokensForNode(this);
@@ -322,15 +324,37 @@ export class DesignTokenNode {
         this._children.add(child);
 
         for (const token of context) {
+            let type = DesignTokenMutationType.add;
+            if (prevContext !== null) {
+                const prevContextIndex = prevContext.indexOf(token);
+                if (prevContextIndex !== -1) {
+                    type = DesignTokenMutationType.change;
+                    prevContext.splice(prevContextIndex, 1);
+                }
+            }
             child.dispatch(
                 new DesignTokenChangeRecordImpl(
                     this,
-                    DesignTokenMutationType.add,
+                    type,
                     token,
                     derivedContext.get(token)?.evaluator.value
                 )
             );
         }
+
+        if (prevContext !== null && prevContext.length > 0) {
+            for (const token of prevContext) {
+                child.dispatch(
+                    new DesignTokenChangeRecordImpl(
+                        this,
+                        DesignTokenMutationType.delete,
+                        token,
+                        derivedContext.get(token)?.evaluator.value
+                    )
+                );
+            }
+        }
+
         DesignTokenNode.notify();
     }
 
@@ -552,8 +576,8 @@ export class DesignTokenNode {
             const { value } = record;
 
             if (value && DesignTokenNode.isDerivedTokenValue(value)) {
-                const dependencies = DerivedValueEvaluator.getOrCreate(value)
-                    .dependencies;
+                const dependencies =
+                    DerivedValueEvaluator.getOrCreate(value).dependencies;
                 // If this is not the originator, check to see if this node
                 // has any dependencies of the token value. If so, we need to evaluate for this node
                 let evaluate = false;

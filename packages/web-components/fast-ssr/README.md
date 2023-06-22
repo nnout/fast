@@ -34,6 +34,18 @@ import "@microsoft/fast-ssr/install-dom-shim";
 
 Alternatively, a full DOM implementation such as [`jsdom`](https://github.com/jsdom/jsdom) or [`happy-dom`](https://github.com/capricorn86/happy-dom) can be used.
 
+#### Augmenting the DOM Shim
+To augment the properties installed by the DOM shim, import the Window factory and installer directly, and provide an object to `createWindow()` with the properties that should be added or overwritten.
+
+```ts
+import {
+  createWindow,
+  installWindowOnGlobal,
+} from '@microsoft/fast-ssr/dom-shim';
+
+installWindowOnGlobal(createWindow({ isSSR: true }));
+```
+
 ### Construct the Renderer
 Import the renderer factory and construct a `TemplateRenderer`.
 ```js
@@ -116,6 +128,128 @@ const result = templateRenderer.render(html`
 |[`when`](https://www.fast.design/docs/fast-element/using-directives#the-when-directive)|[![](https://img.shields.io/badge/-Supported-brightgreen)]()|
 
 > Unsupported directives are no-ops. To understand more about why, see the [Design Philosophy.](#design-philosophy)
+
+##### Rendering Custom Directives
+`@microsoft/fast-element` supports creating custom directives, and `@microsoft/fast-ssr` supports *rendering* 
+those custom directives by associating a SSR *renderer* to the custom directive.
+
+> This section does not cover *creating* a FAST directives - that documentation is coming to fast-element.
+
+With your directive (`MyDirective`) created, create a `ViewBehaviorFactoryRenderer` using the Directive
+
+```ts
+const MyDirectiveRenderer: ViewBehaviorFactoryRenderer<MyDirective> = {
+    // Instructs the TemplateRenderer to use this renderer when instances of
+    // 'MyDirective' are found in a template
+    matches: MyDirective,
+    *render(directive, renderInfo, source, templateRenderer, context) {
+        // Yield something, or do nothing
+    }
+}
+```
+
+What a custom directive should *do* on the server depends highly on the scenario. As discussed above, several FAST directives are no-ops because the use-case doesn't make sense in an SSR context. The `render()` function is provided the directive instance, the SSR renderInfo object, any source data, the `TemplateRenderer`, and the `ExecutionContext` - use these to render what makes sense for the custom directive.
+
+To use the custom renderer, you must configure `fastSSR`:
+```ts
+import fastSSR from "@microsoft/fast-ssr";
+
+const { templateRenderer} = fastSSR({viewBehaviorFactoryRenderers: [MyDirectiveRenderer]});
+```
+
+Then, templates that use `MyDirective` can be rendered:
+
+```ts
+templateRenderer.render(html`<p ${new MyDirective("some-option")}></p>`);
+```
+#### Rendering Asynchronous Components
+Sometimes it is necessary for a component to do asynchronous work prior to rending it's template, and `@microsoft/fast-ssr` can be configured to support async work by supplying the `renderMode: "async"` configuration to the SSR factory:
+
+```ts
+import fastSSR from "@microsoft/fast-ssr";
+
+const { templateRenderer } = fastSSR({
+    renderMode: "async"
+});
+```
+
+Communication that an element requires asynchronous rendering is facilitated by the [PendingTask](https://github.com/webcomponents-cg/community-protocols/blob/main/proposals/pending-task.md) community protocol. The component should emit a `PendingTaskEvent` during it's `connectedCallback()`. Doing so instructs the `TemplateRenderer` to resolve all pending tasks before continuing rendering:
+```ts
+import { PendingTaskEvent } from "@microsoft/fast-element/pending-task";
+// ... 
+class AsyncElement extends FASTElement {
+    async doWork() {
+        // ...
+    }
+
+    connectedCallback() {
+        super.connectedCallback();
+
+        this.dispatchEvent(new PendingTaskEvent(this.doWork()));
+    }
+}
+```
+
+When yielding the results of an async renderer, ensure that any `Promise` encountered is awaited:
+
+```ts
+
+for await (const part of templateRenderer.render(someAsyncTemplate)) {
+    res.write(part);
+}
+```
+
+> It's important to note that to accurately render asynchronous components, template rendering must be effectively paused until async work is complete. This is inherently inefficient because that work gets initiated iteratively, during template rendering. If possible, it is best to architect your components and application in such a way that async work happens prior to template rendering, where initiation of async work can be better coordinated.
+
+#### Disabling Rendering for Specific Components
+In cases where an author doesn't want a FAST component to render in SSR environments, but it is impractical to prevent *defining* that element in the custom element registry, the `ElementRenderer` exposes a mechanism to prevent matching elements it would otherwise match. Components can be disabled by tag-name (`"element-name"`), class constructor (`class MyElement extends FASTElement {}`), or `FASTElementDefinition` (`MyElement.compose({/* config */})`)
+
+```ts
+// The element gets defined somewhere in an application
+const name = "my-element";
+class MyElement extends FASTElement {}
+const definition = MyElement.compose({name, template: html`<p>Hello world</p>`});
+definition.define();
+
+
+const { templateRenderer, ElementRenderer } = fastSSR();
+ElementRenderer.disable("my-element");
+// or 
+// ElementRenderer.disable(MyElement);
+// or
+// ElementRenderer.disable(definition);
+
+// Does not render template contents of the custom element
+templateRenderer.render(html`<my-element></my-element>`);
+```
+
+### Hydration
+#### `defer-hydration` Attribute
+The `defer-hydration` attribute is an attribute that indicates to client-side code that the element should not hydrate it's view. When the attribute is removed, the element is free to hydrate itself.
+
+The SSR renderer can be configured to emit the `defer-hydration` attribute to all FAST custom elements:
+```ts
+const { templateRenderer } = fastSSR({deferHydration: true});
+```
+
+> For more information on this community-protocol, see https://github.com/webcomponents-cg/community-protocols/pull/15
+#### Configuring FAST-Element
+`@microsoft/fast-element` must be configured to respect the `defer-hydration` attribute. To do this, simply import the install code into the client-side application before defining the custom elements:
+```ts
+import "@microsoft/fast-element/install-element-hydration";
+
+// Define custom elements
+```
+
+Alternatively, the `HydratableElementController` can be imported and installed manually:
+
+```ts
+import { HydratableElementController } from "@microsoft/fast-element/element-hydration";
+
+HydratableElementController.install();
+```
+
+After you do this, `@microsoft/fast-element` will wait until the `defer-hydration` attribute is removed (if present during connection) before doing connection work like rendering templates, applying stylesheets, and binding behaviors.
 
 ### Configuring the RenderInfo Object
 `TemplateRenderer.render()` must be invoked with a `RenderInfo` object. Its purpose is to provide different element renderers to the process, as well as metadata about the rendering process. It can be used to render custom elements from different templating libraries in the same process. By default, `TemplateRenderer.render()` will create a `RenderInfo` object for you, but you can also easily construct your own using `TemplateRenderer.createRenderInfo()`: 

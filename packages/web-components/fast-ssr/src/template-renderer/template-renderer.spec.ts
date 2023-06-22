@@ -1,12 +1,13 @@
 import "../install-dom-shim.js";
-import { children, customElement, ExecutionContext, FASTElement, html, ref, repeat, slotted, when } from "@microsoft/fast-element";
+import { children, css, customElement, ExecutionContext, FASTElement, html, ref, repeat, slotted, when } from "@microsoft/fast-element";
 import { expect, test } from "@playwright/test";
 import fastSSR from "../exports.js";
 import { consolidate } from "../test-utilities/consolidate.js";
-import { TemplateRenderer } from "./template-renderer.js";
+import { DefaultTemplateRenderer } from "./template-renderer.js";
 import { render } from "@microsoft/fast-element/render";
-import { ElementRenderer } from "../element-renderer/element-renderer.js";
+import { DefaultElementRenderer } from "../element-renderer/element-renderer.js";
 import { RenderInfo } from "../render-info.js";
+import { uniqueElementName } from "@microsoft/fast-element/testing";
 
 @customElement("hello-world")
 class HelloWorld extends FASTElement {}
@@ -19,28 +20,14 @@ class WithHostAttributes extends FASTElement {}
 
 
 test.describe("TemplateRenderer", () => {
-    test.describe("should have an initial configuration", () => {
-        test("that emits to shadow DOM", () => {
-            const instance = new TemplateRenderer();
-            expect(instance.componentDOMEmissionMode).toBe("shadow")
-        });
-    });
-
-    test.describe.skip("should allow configuration", () => {
-        test("that emits to light DOM", () => {
-            const instance = new TemplateRenderer(/* Re-implement w/ light mode emission is finished {componentDOMEmissionMode: "light"} */);
-            expect(instance.componentDOMEmissionMode).toBe("light");
-        });
-    });
-
     test.describe("should have a createRenderInfo method", () => {
         test("that returns unique object instances for every invocation", () => {
-            const renderer = new TemplateRenderer();
+            const renderer = new DefaultTemplateRenderer();
             expect(renderer.createRenderInfo()).not.toBe(renderer.createRenderInfo())
         });
         test("that can be populated with ElementRenderers with the 'withDefaultElementRenderer()' method", () => {
-            const renderer = new TemplateRenderer();
-            class MyRenderer extends ElementRenderer {
+            const renderer = new DefaultTemplateRenderer();
+            class MyRenderer extends DefaultElementRenderer {
                 element?: HTMLElement | undefined;
                 attributeChangedCallback(name: string, prev: string | null, next: string | null): void {}
                 connectedCallback(): void {}
@@ -125,7 +112,7 @@ test.describe("TemplateRenderer", () => {
 
             expect(consolidate(result)).toBe("<hello-world><template shadowroot=\"open\"></template></hello-world>");
         });
-        test("should a custom element with a static attribute", () => {
+        test("should render a custom element with a static attribute", () => {
             const { templateRenderer } = fastSSR();
             const result = templateRenderer.render(html`<hello-world id="test"></hello-world>`)
 
@@ -138,7 +125,65 @@ test.describe("TemplateRenderer", () => {
 
             expect(consolidate(result)).toBe(`<with-host-attributes  id="foo" static="static" dynamic="dynamic" bool-true><template shadowroot=\"open\">value<slot></slot></template></with-host-attributes>`);
         });
-    })
+    });
+    test.describe("rendering a FAST element configured with a null shadowOptions config", () => {
+        test("should not render declarative shadow DOM", () => {
+            const name = uniqueElementName();
+            @customElement({
+                name,
+                shadowOptions: null
+            })
+            class MyElement extends FASTElement {}
+
+            const { templateRenderer } = fastSSR();
+            const result = templateRenderer.render(html`<${html.partial(name)}></${html.partial(name)}>`);
+
+            expect(consolidate(result)).toBe(`<${name}></${name}>`);
+        });
+        test("should render it's template to the light DOM", () => {
+            const name = uniqueElementName();
+            @customElement({
+                name,
+                shadowOptions: null,
+                template: html`<p>Hello world</p>`
+            })
+            class MyElement extends FASTElement {}
+
+            const { templateRenderer } = fastSSR();
+            const result = templateRenderer.render(html`<${html.partial(name)}></${html.partial(name)}>`);
+
+            expect(consolidate(result)).toBe(`<${name}><p>Hello world</p></${name}>`);
+        });
+
+        test("should render styles as the first child elements in the element's light DOM", () => {
+            const name = uniqueElementName();
+            @customElement({
+                name,
+                shadowOptions: null,
+                template: html`<p>With styles</p>`,
+                styles: css`:host {color: red;}`
+            })
+            class MyElement extends FASTElement {}
+
+            const { templateRenderer } = fastSSR();
+            const result = templateRenderer.render(html`<${html.partial(name)}></${html.partial(name)}>`);
+
+            expect(consolidate(result)).toBe(`<${name}><style>:host {color: red;}</style><p>With styles</p></${name}>`);
+        });
+        test("should render child elements into the element's light DOM", () => {
+            const name = uniqueElementName();
+            @customElement({
+                name,
+                shadowOptions: null
+            })
+            class MyElement extends FASTElement {}
+
+            const { templateRenderer } = fastSSR();
+            const result = templateRenderer.render(html`<${html.partial(name)}><p>Hello world</p></${html.partial(name)}>`);
+
+            expect(consolidate(result)).toBe(`<${name}><p>Hello world</p></${name}>`);
+        });
+    });
 
     test("should emit a single element template", () => {
         const { templateRenderer } = fastSSR();
@@ -152,6 +197,20 @@ test.describe("TemplateRenderer", () => {
         const result = templateRenderer.render(html`<unregistered-element>Hello world</unregistered-element>`)
 
         expect(consolidate(result)).toBe("<unregistered-element>Hello world</unregistered-element>");
+    });
+
+    test("should not render the template for elements that have been disabled via the ElementRenderer", () => {
+        const name = uniqueElementName();
+        class MyElement extends FASTElement {}
+        const definition = MyElement.compose({name, template: html`<p>Hello world</p>`})
+        definition.define()
+
+        for (const key of [name, definition, MyElement]) {
+            const  { ElementRenderer, templateRenderer } = fastSSR();
+            expect(consolidate(templateRenderer.render(html`<${html.partial(name)}></${html.partial(name)}>`))).toBe(`<${name}><template shadowroot="open"><p>Hello world</p></template></${name}>`);
+            ElementRenderer.disable(key);
+            expect(consolidate(templateRenderer.render(html`<${html.partial(name)}></${html.partial(name)}>`))).toBe(`<${name}><template shadowroot="open"></template></${name}>`);
+        }
     });
 
     /**

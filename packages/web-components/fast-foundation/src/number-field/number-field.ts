@@ -2,11 +2,12 @@ import {
     attr,
     nullableNumberConverter,
     observable,
-    SyntheticViewTemplate,
     Updates,
 } from "@microsoft/fast-element";
 import { keyArrowDown, keyArrowUp } from "@microsoft/fast-web-utilities";
-import { StartEnd, StartEndOptions } from "../patterns/index.js";
+import type { StaticallyComposableHTML } from "../utilities/template-helpers.js";
+import { StartEnd } from "../patterns/start-end.js";
+import type { StartEndOptions } from "../patterns/start-end.js";
 import { applyMixins } from "../utilities/apply-mixins.js";
 import { DelegatesARIATextbox } from "../text-field/text-field.js";
 import { FormAssociatedNumberField } from "./number-field.form-associated.js";
@@ -15,9 +16,9 @@ import { FormAssociatedNumberField } from "./number-field.form-associated.js";
  * Number Field configuration options
  * @public
  */
-export type NumberFieldOptions = StartEndOptions & {
-    stepDownGlyph?: string | SyntheticViewTemplate;
-    stepUpGlyph?: string | SyntheticViewTemplate;
+export type NumberFieldOptions = StartEndOptions<FASTNumberField> & {
+    stepDownGlyph?: StaticallyComposableHTML<FASTNumberField>;
+    stepUpGlyph?: StaticallyComposableHTML<FASTNumberField>;
 };
 
 /**
@@ -215,13 +216,14 @@ export class FASTNumberField extends FormAssociatedNumberField {
      * @internal
      */
     public valueChanged(previous: string, next: string): void {
-        this.value = this.getValidValue(next);
+        const value = this.getValidValue(next);
 
-        if (next !== this.value) {
+        if (next !== value) {
+            this.value = value;
             return;
         }
 
-        if (this.control && !this.isUserInput) {
+        if (this.$fastController.isConnected && this.control?.value !== value) {
             this.control.value = this.value;
         }
 
@@ -361,6 +363,9 @@ export class FASTNumberField extends FormAssociatedNumberField {
      * @internal
      */
     public handleKeyDown(e: KeyboardEvent): boolean {
+        if (this.disabled || this.readOnly) {
+            return true;
+        }
         const key = e.key;
 
         switch (key) {

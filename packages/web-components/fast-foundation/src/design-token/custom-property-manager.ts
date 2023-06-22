@@ -1,12 +1,9 @@
-import {
+import type {
     Constructable,
-    Controller,
-    ElementStyles,
+    ElementController,
     FASTElement,
-    observable,
-    Observable,
-    Updates,
 } from "@microsoft/fast-element";
+import { ElementStyles, observable, Observable, Updates } from "@microsoft/fast-element";
 
 /**
  * A target that can have key/value pairs set and removed.
@@ -125,7 +122,7 @@ class StyleElementStyleSheetTarget implements PropertyTarget {
         });
     }
 
-    handleChange(source: Controller, key: "isConnected") {
+    handleChange(source: ElementController, key: "isConnected") {
         // HTMLStyleElement.sheet is null if the element isn't connected to the DOM,
         // so this method reacts to changes in DOM connection for the element hosting
         // the HTMLStyleElement.
@@ -194,15 +191,14 @@ export class RootStyleSheetTarget implements PropertyTarget {
 }
 
 // Caches PropertyTarget instances
-const propertyTargetCache: WeakMap<
-    FASTElement | Document,
-    PropertyTarget
-> = new WeakMap();
+const propertyTargetCache: WeakMap<FASTElement | Document, PropertyTarget> =
+    new WeakMap();
 // Use Constructable StyleSheets for FAST elements when supported, otherwise use
 // HTMLStyleElement instances
-const propertyTargetCtor: Constructable<PropertyTarget> = ElementStyles.supportsAdoptedStyleSheets
-    ? ConstructableStyleSheetTarget
-    : StyleElementStyleSheetTarget;
+const propertyTargetCtor: Constructable<PropertyTarget> =
+    ElementStyles.supportsAdoptedStyleSheets
+        ? ConstructableStyleSheetTarget
+        : StyleElementStyleSheetTarget;
 
 /**
  * Manages creation and caching of PropertyTarget instances.

@@ -6,17 +6,18 @@ import {
     slotted,
 } from "@microsoft/fast-element";
 import { endSlotTemplate, startSlotTemplate } from "../patterns/index.js";
-import type { FASTToolbar, ToolbarOptions } from "./toolbar.js";
+import type { FASTToolbar } from "./toolbar.js";
+import type { ToolbarOptions } from "./toolbar.options.js";
 
 /**
  * The template for the {@link @microsoft/fast-foundation#(FASTToolbar:class)} component.
  *
  * @public
  */
-export function toolbarTemplate(
+export function toolbarTemplate<T extends FASTToolbar>(
     options: ToolbarOptions = {}
-): ElementViewTemplate<FASTToolbar> {
-    return html<FASTToolbar>`
+): ElementViewTemplate<T> {
+    return html<T>`
         <template
             aria-label="${x => x.ariaLabel}"
             aria-labelledby="${x => x.ariaLabelledby}"
