@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@microsoft/fast-element": "2.0.0-beta.24",
-    "tachometer": "^0.7.0"
+    "tachometer": "^0.7.1"
   },
   "devDependencies": {
     "chalk": "^5.0.1",
